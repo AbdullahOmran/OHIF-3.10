@@ -5,7 +5,7 @@ export const fourUp = {
   locked: true,
   name: '3D four up',
   icon: 'layout-advanced-3d-four-up',
-  isPreset: true,
+  isPreset: false,
   createdDate: '2023-03-15T10:29:44.894Z',
   modifiedDate: '2023-03-15T10:29:44.894Z',
   availableTo: {},
