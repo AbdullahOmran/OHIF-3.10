@@ -5,6 +5,7 @@ import initToolGroups from './initToolGroups.js';
 import setCrosshairsConfiguration from './utils/setCrosshairsConfiguration.js';
 import setFusionActiveVolume from './utils/setFusionActiveVolume.js';
 import i18n from 'i18next';
+import moreTools from './moreTools';
 
 const { MetadataProvider } = classes;
 
@@ -41,7 +42,7 @@ function modeFactory({ modeConfiguration }) {
     // We should not be.
     id,
     routeName: 'tmtv',
-    displayName: i18n.t('Modes:Total Metabolic Tumor Volume'),
+    displayName: i18n.t('Theranostics'),
     /**
      * Lifecycle hooks
      */
@@ -90,17 +91,48 @@ function modeFactory({ modeConfiguration }) {
       unsubscriptions.push(unsubscribe);
       toolbarService.addButtons(toolbarButtons);
       toolbarService.createButtonSection('primary', [
+        '3dView',
         'MeasurementTools',
         'Zoom',
         'WindowLevel',
+        'Capture',
+        'Layout',
         'Crosshairs',
         'Pan',
+        'MoreTools',
       ]);
       toolbarService.createButtonSection('measurementSection', [
         'Length',
         'Bidirectional',
         'ArrowAnnotate',
         'EllipticalROI',
+        'CircleROI',
+        'RectangleROI',
+        'SplineROI',
+        'LivewireContour',
+        'Angle',
+        'PlanarFreehandROI',
+      ]);
+      toolbarService.createButtonSection('moreToolsSection', [
+        'Reset',
+        'rotate-right',
+        'flipHorizontal',
+        // 'ImageSliceSync',
+        // 'ReferenceLines',
+        // 'ImageOverlayViewer',
+        // 'StackScroll',
+        'invert',
+        'Probe',
+        'Cine',
+        // 'Angle',
+        // 'CobbAngle',
+        // 'Magnify',
+        // 'RectangleROI',
+        // 'CalibrationLine',
+        'TagBrowser',
+        // 'AdvancedMagnify',
+        // 'UltrasoundDirectionalTool',
+        // 'WindowLevelRegion',
       ]);
 
       toolbarService.createButtonSection('ROIThresholdToolbox', ['SegmentationTools']);
