@@ -5,7 +5,7 @@ export const primary3D = {
   locked: true,
   name: '3D primary',
   icon: 'layout-advanced-3d-primary',
-  isPreset: true,
+  isPreset: false,
   createdDate: '2023-03-15T10:29:44.894Z',
   modifiedDate: '2023-03-15T10:29:44.894Z',
   availableTo: {},

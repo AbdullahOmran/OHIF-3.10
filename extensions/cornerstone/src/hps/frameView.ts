@@ -5,7 +5,7 @@ const frameView: Types.HangingProtocol.Protocol = {
   description: 'Frame view for the active series',
   name: 'Frame View',
   icon: 'tool-stack-scroll',
-  isPreset: true,
+  isPreset: false,
   toolGroupIds: ['default'],
   protocolMatchingRules: [],
   displaySetSelectors: {
