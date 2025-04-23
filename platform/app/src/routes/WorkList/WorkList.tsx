@@ -99,11 +99,19 @@ function WorkList({
   const { customizationService } = servicesManager.services;
 
   const sortedStudies = useMemo(() => {
+    const validStudies = studies.filter(study => {
+      const { modalities } = study;
+      const validToOpen = appConfig.loadedModes[0].isValidMode({
+        modalities: modalities.replaceAll('/', '\\'),
+        study,
+      }).valid;
+      return validToOpen;
+    });
     if (!canSort) {
-      return studies;
+      return validStudies;
     }
 
-    return [...studies].sort((s1, s2) => {
+    return [...validStudies].sort((s1, s2) => {
       if (shouldUseDefaultSort) {
         const ascendingSortModifier = -1;
         return _sortStringDates(s1, s2, ascendingSortModifier);
@@ -449,7 +457,8 @@ function WorkList({
                       dataCY={`mode-${mode.routeName}-${studyInstanceUid}`}
                       className={isValidMode ? 'text-[13px]' : 'bg-[#222d44] text-[13px]'}
                     >
-                      {mode.displayName}
+                      {/* {mode.displayName} */}
+                      Open
                     </Button>
                   </Link>
                 )
