@@ -80,6 +80,32 @@ const commandsModule = ({ servicesManager, commandsManager, extensionManager }: 
 
       return ptDisplaySet;
     },
+    getMatchingCTDisplaySet: ({ viewportMatchDetails }) => {
+      // Todo: this is assuming that the hanging protocol has successfully matched
+      // the correct PT. For future, we should have a way to filter out the PTs
+      // that are in the viewer layout (but then we have the problem of the attenuation
+      // corrected PT vs the non-attenuation correct PT)
+
+      let ctDisplaySet = null;
+      for (const [viewportId, viewportDetails] of viewportMatchDetails) {
+        const { displaySetsInfo } = viewportDetails;
+        const displaySets = displaySetsInfo.map(({ displaySetInstanceUID }) =>
+          displaySetService.getDisplaySetByUID(displaySetInstanceUID)
+        );
+
+        if (!displaySets || displaySets.length === 0) {
+          continue;
+        }
+
+        ctDisplaySet = displaySets.find(displaySet => displaySet.Modality === 'CT');
+
+        if (ctDisplaySet) {
+          break;
+        }
+      }
+
+      return ctDisplaySet;
+    },
     getPTMetadata: ({ ptDisplaySet }) => {
       const dataSource = extensionManager.getDataSources()[0];
       const imageIds = dataSource.getImageIdsForDisplaySet(ptDisplaySet);
@@ -119,36 +145,61 @@ const commandsModule = ({ servicesManager, commandsManager, extensionManager }: 
         viewportMatchDetails,
       });
 
+      const ctDisplaySet = actions.getMatchingCTDisplaySet({
+        viewportMatchDetails,
+      });
+
       let withPTViewportId = null;
+      let withCTViewportId = null;
+      if (ptDisplaySet) {
+        for (const [viewportId, { displaySetsInfo }] of viewportMatchDetails.entries()) {
+          const isPT = displaySetsInfo.some(
+            ({ displaySetInstanceUID }) =>
+              displaySetInstanceUID === ptDisplaySet.displaySetInstanceUID
+          );
 
-      for (const [viewportId, { displaySetsInfo }] of viewportMatchDetails.entries()) {
-        const isPT = displaySetsInfo.some(
-          ({ displaySetInstanceUID }) =>
-            displaySetInstanceUID === ptDisplaySet.displaySetInstanceUID
-        );
-
-        if (isPT) {
-          withPTViewportId = viewportId;
-          break;
+          if (isPT) {
+            withPTViewportId = viewportId;
+            break;
+          }
         }
       }
+      ///////////////////////////////////////// for CT////////////////
+      if (ctDisplaySet) {
+        for (const [viewportId, { displaySetsInfo }] of viewportMatchDetails.entries()) {
+          const isCT = displaySetsInfo.some(
+            ({ displaySetInstanceUID }) =>
+              displaySetInstanceUID === ctDisplaySet.displaySetInstanceUID
+          );
 
-      if (!ptDisplaySet) {
-        uiNotificationService.error('No matching PT display set found');
+          if (isCT) {
+            withCTViewportId = viewportId;
+            break;
+          }
+        }
+      }
+      /////////////////////////////////////////////////////////
+      if (!ptDisplaySet && !ctDisplaySet) {
+        uiNotificationService.error('No matching PT or CT display set found');
         return;
       }
 
-      const currentSegmentations =
-        segmentationService.getSegmentationRepresentations(withPTViewportId);
+      const withViewportId = withPTViewportId ? withPTViewportId : withCTViewportId;
 
-      const displaySet = displaySetService.getDisplaySetByUID(ptDisplaySet.displaySetInstanceUID);
+      const currentSegmentations =
+        segmentationService.getSegmentationRepresentations(withViewportId);
+
+      const displaySetInstanceUID = ptDisplaySet
+        ? ptDisplaySet.displaySetInstanceUID
+        : ctDisplaySet.displaySetInstanceUID;
+      const displaySet = displaySetService.getDisplaySetByUID(displaySetInstanceUID);
 
       const segmentationId = await segmentationService.createLabelmapForDisplaySet(displaySet, {
         label: `Segmentation ${currentSegmentations.length + 1}`,
         segments: { 1: { label: `${i18n.t('Segment')} 1`, active: true } },
       });
 
-      segmentationService.addSegmentationRepresentation(withPTViewportId, {
+      segmentationService.addSegmentationRepresentation(withViewportId, {
         segmentationId,
       });
 
