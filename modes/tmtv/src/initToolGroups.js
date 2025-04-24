@@ -177,9 +177,35 @@ function _initToolGroups(toolNames, Enums, toolGroupService, commandsManager) {
 
   toolGroupService.createToolGroupAndAddTools(toolGroupIds.MIP, mipTools);
 }
+function initVolume3DToolGroup(extensionManager, toolGroupService) {
+  const utilityModule = extensionManager.getModuleEntry(
+    '@ohif/extension-cornerstone.utilityModule.tools'
+  );
 
-function initToolGroups(toolNames, Enums, toolGroupService, commandsManager) {
+  const { toolNames, Enums } = utilityModule.exports;
+
+  const tools = {
+    active: [
+      {
+        toolName: toolNames.TrackballRotateTool,
+        bindings: [{ mouseButton: Enums.MouseBindings.Primary }],
+      },
+      {
+        toolName: toolNames.Zoom,
+        bindings: [{ mouseButton: Enums.MouseBindings.Secondary }],
+      },
+      {
+        toolName: toolNames.Pan,
+        bindings: [{ mouseButton: Enums.MouseBindings.Auxiliary }],
+      },
+    ],
+  };
+
+  toolGroupService.createToolGroupAndAddTools('volume3d', tools);
+}
+function initToolGroups(toolNames, Enums, toolGroupService, commandsManager, extensionManager) {
   _initToolGroups(toolNames, Enums, toolGroupService, commandsManager);
+  initVolume3DToolGroup(extensionManager, toolGroupService);
 }
 
 export default initToolGroups;
