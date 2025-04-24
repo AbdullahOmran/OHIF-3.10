@@ -26,6 +26,9 @@ const tmtv = {
   hangingProtocol: '@ohif/extension-tmtv.hps.mprFusion',
   petSUV: '@ohif/extension-tmtv.panelModule.petSUV',
   tmtv: '@ohif/extension-tmtv.panelModule.tmtv',
+
+  sopClassHandler: '@ohif/extension-cornerstone-dicom-seg.sopClassHandlerModule.dicom-seg',
+  viewport: '@ohif/extension-cornerstone-dicom-seg.viewportModule.dicom-seg',
 };
 
 const extensionDependencies = {
@@ -250,6 +253,10 @@ function modeFactory({ modeConfiguration }) {
                   namespace: cs3d.viewport,
                   displaySetsToDisplay: [ohif.sopClassHandler],
                 },
+                {
+                  namespace: tmtv.viewport,
+                  displaySetsToDisplay: [tmtv.sopClassHandler],
+                },
               ],
             },
           };
@@ -258,7 +265,7 @@ function modeFactory({ modeConfiguration }) {
     ],
     extensions: extensionDependencies,
     hangingProtocol: tmtv.hangingProtocol,
-    sopClassHandlers: [ohif.sopClassHandler],
+    sopClassHandlers: [ohif.sopClassHandler, tmtv.sopClassHandler],
     ...modeConfiguration,
   };
 }

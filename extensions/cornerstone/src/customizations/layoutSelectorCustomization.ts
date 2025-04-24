@@ -50,7 +50,7 @@ export default {
             return null;
           }
 
-          const areValid = _areSelectorsValid(hp, displaySets, hangingProtocolService);
+          // const areValid = _areSelectorsValid(hp, displaySets, hangingProtocolService);
 
           return {
             icon: hp.icon,
@@ -58,7 +58,7 @@ export default {
             commandOptions: {
               protocolId: hp.id,
             },
-            disabled: !areValid,
+            // disabled: !areValid,
           };
         })
         .filter(preset => preset !== null);
