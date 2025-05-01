@@ -108,20 +108,22 @@ const createRoutes = ({
   console.log('Registering worklist route', routerBasename, path);
 
   const WorkListRoute = {
-    path: '/',
+    path: '/study-list',
     children: DataSourceWrapper,
-    private: true,
+    private: false,
     props: { children: WorkList, servicesManager, extensionManager },
   };
 
   const customRoutes = customizationService.getCustomization('routes.customRoutes');
+
+  console.log('Custom routes', customRoutes);
 
   const allRoutes = [
     ...routes,
     ...(showStudyList ? [WorkListRoute] : []),
     ...(customRoutes?.routes || []),
     ...bakedInRoutes,
-    customRoutes?.notFoundRoute || notFoundRoute,
+    notFoundRoute,
   ];
 
   function RouteWithErrorBoundary({ route, ...rest }) {

@@ -11,6 +11,7 @@ import filtersMeta from './filtersMeta.js';
 import { useAppConfig } from '@state';
 import { useDebounce, useSearchParams } from '@hooks';
 import { utils } from '@ohif/core';
+import { Label } from '../../components/Label.tsx';
 
 import {
   StudyListExpandedRow,
@@ -40,6 +41,8 @@ import { Types } from '@ohif/ui';
 
 import { preserveQueryParameters, preserveQueryStrings } from '../../utils/preserveQueryParameters';
 
+import { useLocation } from 'react-router-dom';
+
 const PatientInfoVisibility = Types.PatientInfoVisibility;
 
 const { sortBySeriesDate } = utils;
@@ -60,6 +63,9 @@ function WorkList({
   onRefresh,
   servicesManager,
 }: withAppTypes) {
+  const location = useLocation();
+  console.log('Current location:', location.pathname);
+
   const { hotkeyDefinitions, hotkeyDefaults } = hotkeysManager;
   const { show, hide } = useModal();
   const { t } = useTranslation();
@@ -82,6 +88,8 @@ function WorkList({
     ...defaultFilterValues,
     ...sessionQueryFilterValues,
   });
+
+  console.log('filterValues', filterValues);
 
   const debouncedFilterValues = useDebounce(filterValues, 200);
   const { resultsPerPage, pageNumber, sortBy, sortDirection } = filterValues;
@@ -167,6 +175,44 @@ function WorkList({
     setFilterValues({ ...filterValues, pageNumber: newPageNumber });
   };
 
+  const patientData = [
+    {
+      name: 'John Doe',
+      description: 'PET-CT Scan for Oncology Analysis',
+      accession: '122344',
+      classification: 'suspicious',
+      mrn: '0001',
+    },
+    {
+      name: 'Jane Smith',
+      description: 'PET-CT Scan for Oncology Analysis',
+      accession: '567890',
+      classification: 'suspicious',
+      mrn: '0002',
+    },
+    {
+      name: 'Robert Brown',
+      description: 'PET-CT Scan for Oncology Analysis',
+      accession: '998877',
+      classification: 'suspicious',
+      mrn: '0003',
+    },
+    {
+      name: 'Emily Johnson',
+      description: 'PET-CT Scan for Oncology Analysis',
+      accession: '445566',
+      classification: 'suspicious',
+      mrn: '0004',
+    },
+    {
+      name: 'Michael Lee',
+      description: 'PET-CT Scan for Oncology Analysis',
+      accession: '223344',
+      classification: 'suspicious',
+      mrn: '0005',
+    },
+  ];
+
   const onResultsPerPageChange = newResultsPerPage => {
     setFilterValues({
       ...filterValues,
@@ -216,7 +262,7 @@ function WorkList({
       skipEmptyString: true,
     });
     navigate({
-      pathname: '/',
+      pathname: '/study-list',
       search: search ? `?${search}` : undefined,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -262,7 +308,7 @@ function WorkList({
   const tableDataSource = sortedStudies.map((study, key) => {
     const rowKey = key + 1;
     const isExpanded = expandedRows.some(k => k === rowKey);
-    const {
+    let {
       studyInstanceUid,
       accession,
       modalities,
@@ -273,6 +319,14 @@ function WorkList({
       date,
       time,
     } = study;
+
+    const patient = patientData[rowKey % 4];
+    const classification = patient.classification;
+    patientName = patient.name;
+    description = mrn;
+    accession = patient.accession;
+    mrn = patient.mrn;
+
     const studyDate =
       date &&
       moment(date, ['YYYYMMDD', 'YYYY.MM.DD'], true).isValid() &&
@@ -308,6 +362,15 @@ function WorkList({
       clickableCY: studyInstanceUid,
       row: [
         {
+          key: 'ClassificationLabel',
+          content: classification ? (
+            <Label type={classification}>{classification}</Label>
+          ) : (
+            <span className="text-gray-700">Diagnosis</span>
+          ),
+          gridCol: 4,
+        },
+        {
           key: 'patientName',
           content: patientName ? makeCopyTooltipCell(patientName) : null,
           gridCol: 4,
@@ -325,7 +388,7 @@ function WorkList({
               {studyTime && <span>{studyTime}</span>}
             </>
           ),
-          title: `${studyDate || ''} ${studyTime || ''}`,
+          title: `${studyDate || 'studyDate'} ${studyTime || 'studyTime'}`,
           gridCol: 5,
         },
         {
@@ -333,33 +396,33 @@ function WorkList({
           content: makeCopyTooltipCell(description),
           gridCol: 4,
         },
-        {
-          key: 'modality',
-          content: modalities,
-          title: modalities,
-          gridCol: 3,
-        },
-        {
-          key: 'accession',
-          content: makeCopyTooltipCell(accession),
-          gridCol: 3,
-        },
-        {
-          key: 'instances',
-          content: (
-            <>
-              <Icons.GroupLayers
-                className={classnames('mr-2 inline-flex w-4', {
-                  'text-primary': isExpanded,
-                  'text-secondary-light': !isExpanded,
-                })}
-              />
-              {instances}
-            </>
-          ),
-          title: (instances || 0).toString(),
-          gridCol: 2,
-        },
+        // {
+        //   key: 'modality',
+        //   content: modalities,
+        //   title: modalities,
+        //   gridCol: 3,
+        // },
+        // {
+        //   key: 'accession',
+        //   content: makeCopyTooltipCell(accession),
+        //   gridCol: 3,
+        // },
+        // {
+        //   key: 'instances',
+        //   content: (
+        //     <>
+        //       <Icons.GroupLayers
+        //         className={classnames('mr-2 inline-flex w-4', {
+        //           'text-primary': isExpanded,
+        //           'text-secondary-light': !isExpanded,
+        //         })}
+        //       />
+        //       {instances}
+        //     </>
+        //   ),
+        //   title: (instances || 0).toString(),
+        //   gridCol: 2,
+        // },
       ],
       // Todo: This is actually running for all rows, even if they are
       // not clicked on.
