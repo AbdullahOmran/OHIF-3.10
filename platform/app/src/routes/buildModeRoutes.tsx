@@ -42,7 +42,7 @@ export default function buildModeRoutes({
   modes.forEach(mode => {
     // todo: for each route. add route to path.
     dataSourceNames.forEach(dataSourceName => {
-      const path = `${mode.routeName}/${dataSourceName}`;
+      const path = `study-list/${mode.routeName}/${dataSourceName}`;
 
       // TODO move up.
       const children = () => (
@@ -56,16 +56,17 @@ export default function buildModeRoutes({
         />
       );
 
+      console.log('Adding route', path, mode);
       routes.push({
         path,
         children,
-        private: true,
+        private: false,
       });
     });
 
     // Add active DataSource route.
     // This is the DataSource route for the active data source defined in ExtensionManager.getActiveDataSource
-    const path = `${mode.routeName}`;
+    const path = `study-list/${mode.routeName}`;
 
     // TODO move up.
     const children = () => (
@@ -84,6 +85,8 @@ export default function buildModeRoutes({
       private: true,
     });
   });
+
+  console.log('Routes', routes);
 
   return routes;
 }
