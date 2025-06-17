@@ -199,14 +199,14 @@ export const HomePage = () => {
                 </p>
               </div>
               <div className="flex flex-col items-center space-y-2 rounded-lg border border-gray-800 bg-gray-900 p-6 shadow-sm transition-shadow hover:shadow-md">
-                <div className="rounded-full bg-cyan-100 p-3">
+                <div className="rounded-full bg-indigo-100 p-3">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
                     strokeWidth={1.5}
                     stroke="currentColor"
-                    className="h-6 w-6 text-cyan-700"
+                    className="h-6 w-6 text-indigo-700"
                   >
                     <path
                       strokeLinecap="round"
