@@ -5,7 +5,7 @@
   "StorageCompression": false,
   "MaximumStorageSize": 0,
   "MaximumPatientCount": 0,
-  "LuaScripts": [],
+  "LuaScripts": ["/etc/orthanc/script.lua"],
   "Plugins": ["/usr/share/orthanc/plugins", "/usr/local/share/orthanc/plugins"],
   "ConcurrentJobs": 2,
   "HttpServerEnabled": true,
@@ -74,6 +74,8 @@
   "MediaArchiveSize": 1,
   "StorageAccessOnFind": "Always",
   "MetricsEnabled": true,
+  "ExecuteLuaEnabled": true,
+  "RestApiWriteToFileSystemEnabled": true,
 
   "DicomWeb": {
     "Enable": true,
