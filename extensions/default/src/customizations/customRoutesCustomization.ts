@@ -2,6 +2,7 @@ import { HomePage } from '../Components/HomePage';
 import { SignupPage } from '../Components/SignupPage';
 import { LoginPage } from '../Components/LoginPage';
 import { NavigatePage } from '../Components/NavigatePage';
+import { ProfilePage } from '../Components/ProfilePage';
 
 export default {
   'routes.customRoutes': {
@@ -24,6 +25,11 @@ export default {
       {
         path: '/home',
         children: HomePage,
+        private: false,
+      },
+      {
+        path: '/profile',
+        children: ProfilePage,
         private: false,
       },
     ],
