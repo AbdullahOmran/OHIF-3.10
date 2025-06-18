@@ -175,43 +175,43 @@ function WorkList({
     setFilterValues({ ...filterValues, pageNumber: newPageNumber });
   };
 
-  const patientData = [
-    {
-      name: 'John Doe',
-      description: 'PET-CT Scan for Oncology Analysis',
-      accession: '122344',
-      classification: 'suspicious',
-      mrn: '0001',
-    },
-    {
-      name: 'Jane Smith',
-      description: 'PET-CT Scan for Oncology Analysis',
-      accession: '567890',
-      classification: 'suspicious',
-      mrn: '0002',
-    },
-    {
-      name: 'Robert Brown',
-      description: 'PET-CT Scan for Oncology Analysis',
-      accession: '998877',
-      classification: 'suspicious',
-      mrn: '0003',
-    },
-    {
-      name: 'Emily Johnson',
-      description: 'PET-CT Scan for Oncology Analysis',
-      accession: '445566',
-      classification: 'suspicious',
-      mrn: '0004',
-    },
-    {
-      name: 'Michael Lee',
-      description: 'PET-CT Scan for Oncology Analysis',
-      accession: '223344',
-      classification: 'suspicious',
-      mrn: '0005',
-    },
-  ];
+  // const patientData = [
+  //   {
+  //     name: 'John Doe',
+  //     description: 'PET-CT Scan for Oncology Analysis',
+  //     accession: '122344',
+  //     classification: 'suspicious',
+  //     mrn: '0001',
+  //   },
+  //   {
+  //     name: 'Jane Smith',
+  //     description: 'PET-CT Scan for Oncology Analysis',
+  //     accession: '567890',
+  //     classification: 'suspicious',
+  //     mrn: '0002',
+  //   },
+  //   {
+  //     name: 'Robert Brown',
+  //     description: 'PET-CT Scan for Oncology Analysis',
+  //     accession: '998877',
+  //     classification: 'suspicious',
+  //     mrn: '0003',
+  //   },
+  //   {
+  //     name: 'Emily Johnson',
+  //     description: 'PET-CT Scan for Oncology Analysis',
+  //     accession: '445566',
+  //     classification: 'suspicious',
+  //     mrn: '0004',
+  //   },
+  //   {
+  //     name: 'Michael Lee',
+  //     description: 'PET-CT Scan for Oncology Analysis',
+  //     accession: '223344',
+  //     classification: 'suspicious',
+  //     mrn: '0005',
+  //   },
+  // ];
 
   const onResultsPerPageChange = newResultsPerPage => {
     setFilterValues({
@@ -308,7 +308,7 @@ function WorkList({
   const tableDataSource = sortedStudies.map((study, key) => {
     const rowKey = key + 1;
     const isExpanded = expandedRows.some(k => k === rowKey);
-    let {
+    const {
       studyInstanceUid,
       accession,
       modalities,
@@ -320,12 +320,14 @@ function WorkList({
       time,
     } = study;
 
-    const patient = patientData[rowKey % 4];
-    const classification = patient.classification;
-    patientName = patient.name;
-    description = mrn;
-    accession = patient.accession;
-    mrn = patient.mrn;
+    console.log('Study: ', study);
+
+    // const patient = patientData[rowKey % 4];
+    const classification = null;
+    // patientName = patient.name;
+    // description = mrn;
+    // accession = patient.accession;
+    // mrn = patient.mrn;
 
     const studyDate =
       date &&
@@ -366,7 +368,7 @@ function WorkList({
           content: classification ? (
             <Label type={classification}>{classification}</Label>
           ) : (
-            <span className="text-gray-700">Diagnosis</span>
+            <Label type={'error'}>{'error'}</Label>
           ),
           gridCol: 4,
         },

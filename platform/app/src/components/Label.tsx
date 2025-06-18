@@ -1,6 +1,6 @@
 import React from 'react';
 
-type LabelType = 'healthy' | 'suspicious';
+type LabelType = 'healthy' | 'suspicious' | 'error';
 
 interface LabelProps {
   type: LabelType;
@@ -10,6 +10,7 @@ interface LabelProps {
 const labelStyles: Record<LabelType, string> = {
   healthy: 'bg-[#2a3110] text-[#008A2E] border-[#008A2E]',
   suspicious: 'bg-[#2a3110] text-[#db9210] border-[#db9210]',
+  error: 'bg-red-100 text-red-800 border-red-200',
 };
 
 export function Label({ type, children }: LabelProps) {
