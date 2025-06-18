@@ -425,6 +425,194 @@ const fusionCORONAL = {
     },
   ],
 };
+const fusionCompareAXIAL: AppTypes.HangingProtocol.Viewport = {
+  viewportOptions: {
+    viewportId: 'fusionCompareAXIAL',
+    viewportType: 'volume',
+    orientation: 'axial',
+    toolGroupId: 'fusionToolGroup',
+    initialImageOptions: {
+      // index: 5,
+      preset: 'first', // 'first', 'last', 'middle'
+    },
+    syncGroups: [
+      cameraPositionSync('axialSync'),
+      {
+        type: 'voi',
+        id: 'ctWLSync',
+        source: false,
+        target: true,
+      },
+      {
+        type: 'voi',
+        id: 'fusionWLSync',
+        source: true,
+        target: true,
+        options: {
+          syncColormap: true,
+        },
+      },
+      {
+        type: 'voi',
+        id: 'ptFusionWLSync',
+        source: false,
+        target: true,
+        options: {
+          syncColormap: false,
+          syncInvertState: false,
+        },
+      },
+      hydrateSegSync,
+    ],
+  },
+  displaySets: [
+    {
+      id: 'ctDisplaySet',
+    },
+    {
+      id: 'ptDisplaySet',
+      options: {
+        colormap: {
+          name: 'hsv',
+          opacity: [
+            { value: 0, opacity: 0 },
+            { value: 0.1, opacity: 0.8 },
+            { value: 1, opacity: 0.9 },
+          ],
+        },
+        voi: {
+          custom: 'getPTVOIRange',
+        },
+      },
+    },
+  ],
+};
+
+const fusionCompareSAGITTAL = {
+  viewportOptions: {
+    viewportId: 'fusionCompareSAGITTAL',
+    viewportType: 'volume',
+    orientation: 'sagittal',
+    toolGroupId: 'fusionToolGroup',
+    // initialImageOptions: {
+    //   index: 180,
+    //   preset: 'middle', // 'first', 'last', 'middle'
+    // },
+    syncGroups: [
+      cameraPositionSync('sagittalSync'),
+      {
+        type: 'voi',
+        id: 'ctWLSync',
+        source: false,
+        target: true,
+      },
+      {
+        type: 'voi',
+        id: 'fusionWLSync',
+        source: true,
+        target: true,
+        options: {
+          syncColormap: true,
+        },
+      },
+      {
+        type: 'voi',
+        id: 'ptFusionWLSync',
+        source: false,
+        target: true,
+        options: {
+          syncColormap: false,
+          syncInvertState: false,
+        },
+      },
+      hydrateSegSync,
+    ],
+  },
+  displaySets: [
+    {
+      id: 'ctDisplaySet',
+    },
+    {
+      id: 'ptDisplaySet',
+      options: {
+        colormap: {
+          name: 'hsv',
+          opacity: [
+            { value: 0, opacity: 0 },
+            { value: 0.1, opacity: 0.8 },
+            { value: 1, opacity: 0.9 },
+          ],
+        },
+        voi: {
+          custom: 'getPTVOIRange',
+        },
+      },
+    },
+  ],
+};
+
+const fusionCompareCORONAL = {
+  viewportOptions: {
+    viewportId: 'fusionCompareCORONAL',
+    viewportType: 'volume',
+    orientation: 'coronal',
+    toolGroupId: 'fusionToolGroup',
+    // initialImageOptions: {
+    //   index: 180,
+    //   preset: 'middle', // 'first', 'last', 'middle'
+    // },
+    syncGroups: [
+      cameraPositionSync('coronalSync'),
+      {
+        type: 'voi',
+        id: 'ctWLSync',
+        source: false,
+        target: true,
+      },
+      {
+        type: 'voi',
+        id: 'fusionWLSync',
+        source: true,
+        target: true,
+        options: {
+          syncColormap: true,
+        },
+      },
+      {
+        type: 'voi',
+        id: 'ptFusionWLSync',
+        source: false,
+        target: true,
+        options: {
+          syncColormap: false,
+          syncInvertState: false,
+        },
+      },
+      hydrateSegSync,
+    ],
+  },
+  displaySets: [
+    {
+      id: 'ctDisplaySet',
+    },
+    {
+      id: 'ptDisplaySet',
+      options: {
+        colormap: {
+          name: 'hsv',
+          opacity: [
+            { value: 0, opacity: 0 },
+            { value: 0.1, opacity: 0.8 },
+            { value: 1, opacity: 0.9 },
+          ],
+        },
+        voi: {
+          custom: 'getPTVOIRange',
+        },
+      },
+    },
+  ],
+};
 
 const mipSAGITTAL: AppTypes.HangingProtocol.Viewport = {
   viewportOptions: {
@@ -490,5 +678,8 @@ export {
   fusionAXIAL,
   fusionSAGITTAL,
   fusionCORONAL,
+  fusionCompareAXIAL,
+  fusionCompareSAGITTAL,
+  fusionCompareCORONAL,
   mipSAGITTAL,
 };

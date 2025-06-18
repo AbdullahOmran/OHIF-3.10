@@ -545,6 +545,13 @@ function WorkList({
 
   const menuOptions = [
     {
+      title: 'profile',
+      icon: 'info',
+      onClick: () => {
+        window.location.href = '/profile';
+      },
+    },
+    {
       title: t('Header:About'),
       icon: 'info',
       onClick: () =>
@@ -563,6 +570,12 @@ function WorkList({
           content: UserPreferencesModal as React.ComponentType,
           containerClassName: 'flex  max-w-4xl flex-col',
         }),
+    },
+    {
+      title: 'Logout',
+      onClick: () => {
+        window.location.href = '/home';
+      },
     },
   ];
 
