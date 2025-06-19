@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden'; // Import VisuallyHidden
 
 import { cn } from '../../lib/utils';
 import { useDraggable } from './useDraggable';
@@ -83,8 +84,6 @@ const DialogContent = React.forwardRef<
     ref
   );
 
-  // When not isDraggable, Tailwind centers the dialog.
-  // When isDraggable, we remove the built‑in centering so our inline transform takes over.
   const contentClassName = cn(
     unstyled ? '' : 'w-full',
     'max-w-md bg-muted data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] fixed left-[50%] top-[50%] z-50 grid gap-4 p-4 shadow-lg duration-200 sm:rounded-lg',
@@ -93,6 +92,16 @@ const DialogContent = React.forwardRef<
   );
 
   const style = isDraggable ? { ...props.style, transform: initialTransform } : props.style;
+
+  // Check if DialogTitle is present in children
+  const hasTitle = React.Children.toArray(children).some(
+    child => React.isValidElement(child) && child.type === DialogTitle
+  );
+
+  // Check if DialogDescription is present in children
+  const hasDescription = React.Children.toArray(children).some(
+    child => React.isValidElement(child) && child.type === DialogDescription
+  );
 
   const content = (
     <DialogPrimitive.Content
@@ -111,7 +120,21 @@ const DialogContent = React.forwardRef<
           event.preventDefault();
         }
       }}
+      // Add aria-describedby if no DialogDescription is provided
+      aria-describedby={hasDescription ? undefined : 'dialog-description'}
     >
+      {/* Add default DialogTitle if none is provided */}
+      {!hasTitle && (
+        <VisuallyHidden>
+          <DialogTitle>Dialog</DialogTitle>
+        </VisuallyHidden>
+      )}
+      {/* Add default DialogDescription if none is provided */}
+      {!hasDescription && (
+        <VisuallyHidden>
+          <DialogDescription id="dialog-description">Dialog content</DialogDescription>
+        </VisuallyHidden>
+      )}
       {children}
       {!unstyled && (
         <DialogPrimitive.Close className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none">

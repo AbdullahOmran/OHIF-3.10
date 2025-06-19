@@ -50,8 +50,7 @@ const { sortBySeriesDate } = utils;
 const seriesInStudiesMap = new Map();
 
 /**
- * TODO:
- * - debounce `setFilterValues` (150ms?)
+ * Enhanced WorkList with improved filtering and diagnosis search
  */
 function WorkList({
   data: studies,
@@ -62,9 +61,19 @@ function WorkList({
   dataPath,
   onRefresh,
   servicesManager,
+  onFilterChange, // New prop to handle filter changes at parent level
 }: withAppTypes) {
   const location = useLocation();
+  console.log('STARTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT');
   console.log('Current location:', location.pathname);
+
+  // Debug: Log initial props and filter values
+  console.log('WorkList Props:', {
+    studiesLength: studies?.length,
+    studiesTotal,
+    isLoadingData,
+    dataPath,
+  });
 
   const { hotkeyDefinitions, hotkeyDefaults } = hotkeysManager;
   const { show, hide } = useModal();
@@ -79,26 +88,23 @@ function WorkList({
   const [sessionQueryFilterValues, updateSessionQueryFilterValues] = useSessionStorage({
     key: 'queryFilterValues',
     defaultValue: queryFilterValues,
-    // ToDo: useSessionStorage currently uses an unload listener to clear the filters from session storage
-    // so on systems that do not support unload events a user will NOT be able to alter any existing filter
-    // in the URL, load the page and have it apply.
     clearOnUnload: true,
   });
   const [filterValues, _setFilterValues] = useState({
     ...defaultFilterValues,
     ...sessionQueryFilterValues,
   });
-
-  console.log('filterValues', filterValues);
-
+  console.log('Initial filterValues:', filterValues);
   const debouncedFilterValues = useDebounce(filterValues, 200);
+  // Debug: Log debounced filter values
+  console.log('Debounced filterValues:', debouncedFilterValues);
+
   const { resultsPerPage, pageNumber, sortBy, sortDirection } = filterValues;
 
   /*
    * The default sort value keep the filters synchronized with runtime conditional sorting
    * Only applied if no other sorting is specified and there are less than 101 studies
    */
-
   const canSort = studiesTotal < STUDIES_LIMIT;
   const shouldUseDefaultSort = sortBy === '' || !sortBy;
   const sortModifier = sortDirection === 'descending' ? 1 : -1;
@@ -106,8 +112,162 @@ function WorkList({
     shouldUseDefaultSort && canSort ? { sortBy: 'studyDate', sortDirection: 'ascending' } : {};
   const { customizationService } = servicesManager.services;
 
+  // Client-side filtering for studies (fallback if server-side filtering isn't working)
+  const filteredStudies = useMemo(() => {
+    // Debug: Log studies and filter criteria before filtering
+    console.log('Studies before filtering:', studies);
+    console.log('Filter criteria:', {
+      patientName: filterValues.patientName,
+      mrn: filterValues.mrn,
+      description: filterValues.description,
+      diagnosis: filterValues.diagnosis,
+      accession: filterValues.accession,
+      modalities: filterValues.modalities,
+      studyDate: filterValues.studyDate,
+    });
+
+    if (!studies || studies.length === 0) {
+      console.log('No studies to filter');
+      return [];
+    }
+
+    const filtered = studies.filter(study => {
+      // Patient Name filter
+      if (filterValues.patientName && filterValues.patientName.trim()) {
+        const patientNameMatch =
+          study.patientName &&
+          study.patientName.toLowerCase().includes(filterValues.patientName.toLowerCase().trim());
+        console.log('PatientName filter:', {
+          studyPatientName: study.patientName,
+          filterPatientName: filterValues.patientName,
+          patientNameMatch,
+        });
+        if (!patientNameMatch) {
+          return false;
+        }
+      }
+
+      // MRN filter
+      if (filterValues.mrn && filterValues.mrn.trim()) {
+        const mrnMatch =
+          study.mrn && study.mrn.toLowerCase().includes(filterValues.mrn.toLowerCase().trim());
+        console.log('MRN filter:', {
+          studyMrn: study.mrn,
+          filterMrn: filterValues.mrn,
+          mrnMatch,
+        });
+        if (!mrnMatch) {
+          return false;
+        }
+      }
+
+      // Description filter (this often contains diagnosis information)
+      if (filterValues.description && filterValues.description.trim()) {
+        const descriptionMatch =
+          study.description &&
+          study.description.toLowerCase().includes(filterValues.description.toLowerCase().trim());
+        console.log('Description filter:', {
+          studyDescription: study.description,
+          filterDescription: filterValues.description,
+          descriptionMatch,
+        });
+        if (!descriptionMatch) {
+          return false;
+        }
+      }
+
+      // Diagnosis filter (new field)
+      if (filterValues.diagnosis && filterValues.diagnosis.trim()) {
+        const diagnosisText = filterValues.diagnosis.toLowerCase().trim();
+        const diagnosisMatch =
+          (study.diagnosis && study.diagnosis.toLowerCase().includes(diagnosisText)) ||
+          (study.description && study.description.toLowerCase().includes(diagnosisText)) ||
+          (study.studyDescription &&
+            study.studyDescription.toLowerCase().includes(diagnosisText)) ||
+          (study.clinicalInfo && study.clinicalInfo.toLowerCase().includes(diagnosisText));
+        console.log('Diagnosis filter:', {
+          studyDiagnosis: study.diagnosis,
+          studyDescription: study.description,
+          studyStudyDescription: study.studyDescription,
+          studyClinicalInfo: study.clinicalInfo,
+          filterDiagnosis: filterValues.diagnosis,
+          diagnosisMatch,
+        });
+        if (!diagnosisMatch) {
+          return false;
+        }
+      }
+
+      // Accession filter
+      if (filterValues.accession && filterValues.accession.trim()) {
+        const accessionMatch =
+          study.accession &&
+          study.accession.toLowerCase().includes(filterValues.accession.toLowerCase().trim());
+        console.log('Accession filter:', {
+          studyAccession: study.accession,
+          filterAccession: filterValues.accession,
+          accessionMatch,
+        });
+        if (!accessionMatch) {
+          return false;
+        }
+      }
+
+      // Modalities filter
+      if (filterValues.modalities && filterValues.modalities.length > 0) {
+        const studyModalities = study.modalities ? study.modalities.split(/[\/\\,]/) : [];
+        const hasMatchingModality = filterValues.modalities.some(filterModality =>
+          studyModalities.some(
+            studyModality => studyModality.trim().toLowerCase() === filterModality.toLowerCase()
+          )
+        );
+        console.log('Modalities filter:', {
+          studyModalities,
+          filterModalities: filterValues.modalities,
+          hasMatchingModality,
+        });
+        if (!hasMatchingModality) {
+          return false;
+        }
+      }
+
+      // Date range filter
+      if (filterValues.studyDate.startDate || filterValues.studyDate.endDate) {
+        if (study.date) {
+          const studyDate = moment(study.date, ['YYYYMMDD', 'YYYY.MM.DD'], true);
+          if (studyDate.isValid()) {
+            let dateMatch = true;
+            if (filterValues.studyDate.startDate) {
+              const startDate = moment(filterValues.studyDate.startDate);
+              dateMatch = dateMatch && !studyDate.isBefore(startDate, 'day');
+            }
+            if (filterValues.studyDate.endDate) {
+              const endDate = moment(filterValues.studyDate.endDate);
+              dateMatch = dateMatch && !studyDate.isAfter(endDate, 'day');
+            }
+            console.log('StudyDate filter:', {
+              studyDate: study.date,
+              filterStartDate: filterValues.studyDate.startDate,
+              filterEndDate: filterValues.studyDate.endDate,
+              dateMatch,
+            });
+            if (!dateMatch) {
+              return false;
+            }
+          }
+        }
+      }
+
+      return true;
+    });
+
+    // Debug: Log filtered studies
+    console.log('Filtered studies:', filtered);
+    return filtered;
+  }, [studies, filterValues]);
+
   const sortedStudies = useMemo(() => {
-    const validStudies = studies.filter(study => {
+    const validStudies = filteredStudies.filter(study => {
       const { modalities } = study;
       const validToOpen = appConfig.loadedModes[0].isValidMode({
         modalities: modalities.replaceAll('/', '\\'),
@@ -115,11 +275,12 @@ function WorkList({
       }).valid;
       return validToOpen;
     });
+
     if (!canSort) {
       return validStudies;
     }
 
-    return [...validStudies].sort((s1, s2) => {
+    const sorted = [...validStudies].sort((s1, s2) => {
       if (shouldUseDefaultSort) {
         const ascendingSortModifier = -1;
         return _sortStringDates(s1, s2, ascendingSortModifier);
@@ -142,12 +303,16 @@ function WorkList({
 
       return 0;
     });
-  }, [canSort, studies, shouldUseDefaultSort, sortBy, sortModifier]);
+
+    // Debug: Log sorted studies
+    console.log('Sorted studies:', sorted);
+    return sorted;
+  }, [canSort, filteredStudies, shouldUseDefaultSort, sortBy, sortModifier]);
 
   // ~ Rows & Studies
   const [expandedRows, setExpandedRows] = useState([]);
   const [studiesWithSeriesData, setStudiesWithSeriesData] = useState([]);
-  const numOfStudies = studiesTotal;
+  const numOfStudies = sortedStudies.length; // Use filtered count
   const querying = useMemo(() => {
     return isLoadingData || expandedRows.length > 0;
   }, [isLoadingData, expandedRows]);
@@ -159,6 +324,14 @@ function WorkList({
     _setFilterValues(val);
     updateSessionQueryFilterValues(val);
     setExpandedRows([]);
+
+    // Debug: Log filter value changes
+    console.log('Filter values updated:', val);
+
+    // Notify parent component about filter changes for server-side filtering
+    if (onFilterChange && typeof onFilterChange === 'function') {
+      onFilterChange(val);
+    }
   };
 
   const onPageNumberChange = newPageNumber => {
@@ -174,44 +347,6 @@ function WorkList({
 
     setFilterValues({ ...filterValues, pageNumber: newPageNumber });
   };
-
-  // const patientData = [
-  //   {
-  //     name: 'John Doe',
-  //     description: 'PET-CT Scan for Oncology Analysis',
-  //     accession: '122344',
-  //     classification: 'suspicious',
-  //     mrn: '0001',
-  //   },
-  //   {
-  //     name: 'Jane Smith',
-  //     description: 'PET-CT Scan for Oncology Analysis',
-  //     accession: '567890',
-  //     classification: 'suspicious',
-  //     mrn: '0002',
-  //   },
-  //   {
-  //     name: 'Robert Brown',
-  //     description: 'PET-CT Scan for Oncology Analysis',
-  //     accession: '998877',
-  //     classification: 'suspicious',
-  //     mrn: '0003',
-  //   },
-  //   {
-  //     name: 'Emily Johnson',
-  //     description: 'PET-CT Scan for Oncology Analysis',
-  //     accession: '445566',
-  //     classification: 'suspicious',
-  //     mrn: '0004',
-  //   },
-  //   {
-  //     name: 'Michael Lee',
-  //     description: 'PET-CT Scan for Oncology Analysis',
-  //     accession: '223344',
-  //     classification: 'suspicious',
-  //     mrn: '0005',
-  //   },
-  // ];
 
   const onResultsPerPageChange = newResultsPerPage => {
     setFilterValues({
@@ -277,7 +412,7 @@ function WorkList({
         setStudiesWithSeriesData([...studiesWithSeriesData, studyInstanceUid]);
       } catch (ex) {
         // TODO: UI Notification Service
-        console.warn(ex);
+        console.log(ex);
       }
     };
 
@@ -295,7 +430,7 @@ function WorkList({
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [expandedRows, studies]);
+  }, [expandedRows, sortedStudies]);
 
   const isFiltering = (filterValues, defaultFilterValues) => {
     return !isEqual(filterValues, defaultFilterValues);
@@ -305,6 +440,10 @@ function WorkList({
   const rollingPageNumber = (pageNumber - 1) % rollingPageNumberMod;
   const offset = resultsPerPage * rollingPageNumber;
   const offsetAndTake = offset + resultsPerPage;
+
+  // Debug: Log studies for table data source
+  console.log('Studies for tableDataSource:', sortedStudies.slice(offset, offsetAndTake));
+
   const tableDataSource = sortedStudies.map((study, key) => {
     const rowKey = key + 1;
     const isExpanded = expandedRows.some(k => k === rowKey);
@@ -322,12 +461,7 @@ function WorkList({
 
     console.log('Study: ', study);
 
-    // const patient = patientData[rowKey % 4];
     const classification = null;
-    // patientName = patient.name;
-    // description = mrn;
-    // accession = patient.accession;
-    // mrn = patient.mrn;
 
     const studyDate =
       date &&
@@ -398,36 +532,7 @@ function WorkList({
           content: makeCopyTooltipCell(description),
           gridCol: 4,
         },
-        // {
-        //   key: 'modality',
-        //   content: modalities,
-        //   title: modalities,
-        //   gridCol: 3,
-        // },
-        // {
-        //   key: 'accession',
-        //   content: makeCopyTooltipCell(accession),
-        //   gridCol: 3,
-        // },
-        // {
-        //   key: 'instances',
-        //   content: (
-        //     <>
-        //       <Icons.GroupLayers
-        //         className={classnames('mr-2 inline-flex w-4', {
-        //           'text-primary': isExpanded,
-        //           'text-secondary-light': !isExpanded,
-        //         })}
-        //       />
-        //       {instances}
-        //     </>
-        //   ),
-        //   title: (instances || 0).toString(),
-        //   gridCol: 2,
-        // },
       ],
-      // Todo: This is actually running for all rows, even if they are
-      // not clicked on.
       expandedContent: (
         <StudyListExpandedRow
           seriesTableColumns={{
@@ -471,12 +576,7 @@ function WorkList({
                 modalities: modalitiesToCheck,
                 study,
               });
-              // TODO: Modes need a default/target route? We mostly support a single one for now.
-              // We should also be using the route path, but currently are not
-              // mode.routeName
-              // mode.routes[x].path
-              // Don't specify default data source, and it should just be picked up... (this may not currently be the case)
-              // How do we know which params to pass? Today, it's just StudyInstanceUIDs and configUrl if exists
+
               const query = new URLSearchParams();
               if (filterValues.configUrl) {
                 query.append('configUrl', filterValues.configUrl);
@@ -491,15 +591,11 @@ function WorkList({
                     key={i}
                     to={`${mode.routeName}${dataPath || ''}?${query.toString()}`}
                     onClick={event => {
-                      // In case any event bubbles up for an invalid mode, prevent the navigation.
-                      // For example, the event bubbles up when the icon embedded in the disabled button is clicked.
                       if (!isValidMode) {
                         event.preventDefault();
                       }
                     }}
-                    // to={`${mode.routeName}/dicomweb?StudyInstanceUIDs=${studyInstanceUid}`}
                   >
-                    {/* TODO revisit the completely rounded style of buttons used for launching a mode from the worklist later - for now use LegacyButton*/}
                     <Button
                       type={ButtonEnums.type.primary}
                       size={ButtonEnums.size.medium}
@@ -522,7 +618,6 @@ function WorkList({
                       dataCY={`mode-${mode.routeName}-${studyInstanceUid}`}
                       className={isValidMode ? 'text-[13px]' : 'bg-[#222d44] text-[13px]'}
                     >
-                      {/* {mode.displayName} */}
                       Open
                     </Button>
                   </Link>
@@ -545,12 +640,19 @@ function WorkList({
 
   const menuOptions = [
     {
+      title: 'Profile',
+      icon: 'info',
+      onClick: () => {
+        window.location.href = '/profile';
+      },
+    },
+    {
       title: t('Header:About'),
       icon: 'info',
       onClick: () =>
         show({
           content: AboutModal as React.ComponentType,
-          title: t('AboutModal:About OHIF Viewer'),
+          title: t('AboutModal:About TherAInostics Viewer'),
           containerClassName: 'max-w-md ',
         }),
     },
@@ -598,7 +700,6 @@ function WorkList({
               onStarted={() => {
                 show({
                   ...uploadProps,
-                  // when upload starts, hide the default close button as closing the dialogue must be handled by the upload dialogue itself
                   closeButton: false,
                 });
               }}
@@ -611,6 +712,11 @@ function WorkList({
     'ohif.dataSourceConfigurationComponent'
   );
 
+  // Debug logging (existing)
+  console.log('Total studies from props:', studies?.length);
+  console.log('Filtered studies count:', filteredStudies.length);
+  console.log('Current filter values:', filterValues);
+
   return (
     <div className="flex h-screen flex-col bg-black">
       <Header
@@ -618,10 +724,10 @@ function WorkList({
         menuOptions={menuOptions}
         isReturnEnabled={false}
         WhiteLabeling={appConfig.whiteLabeling}
-        showPatientInfo={PatientInfoVisibility.DISABLED}
+        showPatientInfo={PatientInfoVisibility.VISIBLE}
       />
-      <Onboarding />
-      <InvestigationalUseDialog dialogConfiguration={appConfig?.investigationalUseDialog} />
+      {/* <Onboarding /> */}
+      {/* <InvestigationalUseDialog dialogConfiguration={appConfig?.investigationalUseDialog} /> */}
       <div className="flex h-full flex-col overflow-y-auto">
         <ScrollArea>
           <div className="flex grow flex-col">
@@ -680,6 +786,7 @@ WorkList.propTypes = {
   }).isRequired,
   isLoadingData: PropTypes.bool.isRequired,
   servicesManager: PropTypes.object.isRequired,
+  onFilterChange: PropTypes.func, // New prop for handling filter changes
 };
 
 const defaultFilterValues = {
@@ -690,6 +797,7 @@ const defaultFilterValues = {
     endDate: null,
   },
   description: '',
+  diagnosis: '', // New field for diagnosis filtering
   modalities: [],
   accession: '',
   sortBy: '',
@@ -724,6 +832,7 @@ function _getQueryFilterValues(params) {
       endDate: params.get('enddate') || null,
     },
     description: params.get('description'),
+    diagnosis: params.get('diagnosis'), // New field
     modalities: params.get('modalities') ? params.get('modalities').split(',') : [],
     accession: params.get('accession'),
     sortBy: params.get('sortby'),
@@ -739,6 +848,8 @@ function _getQueryFilterValues(params) {
     key => queryFilterValues[key] == null && delete queryFilterValues[key]
   );
 
+  // Debug: Log parsed query filter values
+  console.log('Parsed queryFilterValues from URL:', queryFilterValues);
   return queryFilterValues;
 }
 

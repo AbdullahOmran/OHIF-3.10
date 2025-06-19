@@ -19,7 +19,7 @@ export default {
   'ohif.tours': [
     {
       id: 'basicViewerTour',
-      route: '/viewer',
+      route: '/study-list',
       steps: [
         {
           id: 'scroll',
@@ -36,66 +36,149 @@ export default {
           beforeShowPromise: () => waitForElement('.viewport-element'),
         },
         {
-          id: 'zoom',
-          title: 'Zooming In and Out',
-          text: 'You can zoom the images using the right click.',
+          id: 'tryScroll',
+          title: 'Try Scrolling',
+          text: 'Now try scrolling through the images using your mouse wheel.',
           attachTo: {
             element: '.viewport-element',
-            on: 'left',
+            on: 'right',
           },
           advanceOn: {
             selector: '.cornerstone-viewport-element',
-            event: 'CORNERSTONE_TOOLS_MOUSE_UP',
+            event: 'CORNERSTONE_TOOLS_MOUSE_WHEEL',
+          },
+          beforeShowPromise: () => waitForElement('.viewport-element'),
+        },
+        {
+          id: 'zoom',
+          title: 'Zoom Tool',
+          text: 'Use the Zoom tool to zoom in and out of the images.',
+          attachTo: {
+            element: '[data-cy="Zoom"]',
+            on: 'bottom',
+          },
+          advanceOn: {
+            selector: '[data-cy="Zoom"]',
+            event: 'click',
+          },
+          beforeShowPromise: () => waitForElement('[data-cy="Zoom"]'),
+        },
+        {
+          id: 'tryZoom',
+          title: 'Try Zooming',
+          text: 'Now try zooming in or out on the image using the mouse wheel while holding the Zoom tool.',
+          attachTo: {
+            element: '.viewport-element',
+            on: 'right',
+          },
+          advanceOn: {
+            selector: '.cornerstone-viewport-element',
+            event: 'CORNERSTONE_TOOLS_MOUSE_DRAG',
           },
           beforeShowPromise: () => waitForElement('.viewport-element'),
         },
         {
           id: 'pan',
-          title: 'Panning the Image',
-          text: 'You can pan the images using the middle click.',
+          title: 'Pan Tool',
+          text: 'Use the Pan tool to move the image within the viewport.',
+          attachTo: {
+            element: '[data-cy="Pan"]',
+            on: 'bottom',
+          },
+          advanceOn: {
+            selector: '[data-cy="Pan"]',
+            event: 'click',
+          },
+          beforeShowPromise: () => waitForElement('[data-cy="Pan"]'),
+        },
+        {
+          id: 'tryPan',
+          title: 'Try Panning',
+          text: 'Now try panning the image by clicking and dragging with the Pan tool.',
           attachTo: {
             element: '.viewport-element',
-            on: 'top',
+            on: 'right',
           },
           advanceOn: {
             selector: '.cornerstone-viewport-element',
-            event: 'CORNERSTONE_TOOLS_MOUSE_UP',
+            event: 'CORNERSTONE_TOOLS_MOUSE_DRAG',
           },
           beforeShowPromise: () => waitForElement('.viewport-element'),
         },
         {
-          id: 'windowing',
-          title: 'Adjusting Window Level',
-          text: 'You can modify the window level using the left click.',
+          id: 'crosshair',
+          title: 'Crosshair Tool',
+          text: 'Use the Crosshair tool to synchronize views across multiple viewports.',
+          attachTo: {
+            element: '[data-cy="Crosshairs"]',
+            on: 'bottom',
+          },
+          advanceOn: {
+            selector: '[data-cy="Crosshairs"]',
+            event: 'click',
+          },
+          beforeShowPromise: () => waitForElement('[data-cy="Crosshairs"]'),
+        },
+        {
+          id: 'tryCrosshair',
+          title: 'Try Crosshair',
+          text: 'Now try using the Crosshair tool by clicking and dragging on the viewport.',
           attachTo: {
             element: '.viewport-element',
-            on: 'left',
+            on: 'right',
           },
           advanceOn: {
             selector: '.cornerstone-viewport-element',
-            event: 'CORNERSTONE_TOOLS_MOUSE_UP',
+            event: 'CORNERSTONE_TOOLS_MOUSE_DRAG',
           },
           beforeShowPromise: () => waitForElement('.viewport-element'),
         },
+        {
+          id: 'captureScreenshot',
+          title: 'Capture Screenshot',
+          text: 'Use the Capture tool to take a screenshot of the current viewport.',
+          attachTo: {
+            element: '[data-cy="Capture"]',
+            on: 'bottom',
+          },
+          advanceOn: {
+            selector: '[data-cy="Capture"]',
+            event: 'click',
+          },
+          beforeShowPromise: () => waitForElement('[data-cy="Capture"]'),
+        },
+        // {
+        //   id: 'tryCapture',
+        //   title: 'Try Capturing',
+        //   text: 'Now try capturing a screenshot by clicking the Capture tool again.',
+        //   attachTo: {
+        //     element: '[data-cy="Capture"]',
+        //     on: 'bottom',
+        //   },
+        //   advanceOn: {
+        //     selector: '[data-cy="Capture"]',
+        //     event: 'click',
+        //   },
+        //   beforeShowPromise: () => waitForElement('[data-cy="Capture"]'),
+        // },
         {
           id: 'length',
           title: 'Using the Measurement Tools',
           text: 'You can measure the length of a region using the Length tool.',
           attachTo: {
-            element: '[data-cy="MeasurementTools-split-button-primary"]',
+            element: '[data-cy="Length"]',
             on: 'bottom',
           },
           advanceOn: {
-            selector: '[data-cy="MeasurementTools-split-button-primary"]',
+            selector: '[data-cy="Length"]',
             event: 'click',
           },
-          beforeShowPromise: () =>
-            waitForElement('[data-cy="MeasurementTools-split-button-primary]'),
+          beforeShowPromise: () => waitForElement('[data-cy="Length"]'),
         },
         {
-          id: 'drawAnnotation',
-          title: 'Drawing Length Annotations',
-          text: 'Use the length tool on the viewport to measure the length of a region.',
+          id: 'tryLength',
+          title: 'Try Measuring Length',
+          text: 'Now try measuring a region by clicking and dragging with the Length tool.',
           attachTo: {
             element: '.viewport-element',
             on: 'right',
@@ -105,62 +188,6 @@ export default {
             event: 'event::measurement_added',
           },
           beforeShowPromise: () => waitForElement('.viewport-element'),
-        },
-        {
-          id: 'trackMeasurement',
-          title: 'Tracking Measurements in the Panel',
-          text: 'Click yes to track the measurements in the measurement panel.',
-          attachTo: {
-            element: '[data-cy="prompt-begin-tracking-yes-btn"]',
-            on: 'bottom',
-          },
-          advanceOn: {
-            selector: '[data-cy="prompt-begin-tracking-yes-btn"]',
-            event: 'click',
-          },
-          beforeShowPromise: () => waitForElement('[data-cy="prompt-begin-tracking-yes-btn"]'),
-        },
-        {
-          id: 'openMeasurementPanel',
-          title: 'Opening the Measurements Panel',
-          text: 'Click the measurements button to open the measurements panel.',
-          attachTo: {
-            element: '#trackedMeasurements-btn',
-            on: 'left-start',
-          },
-          advanceOn: {
-            selector: '#trackedMeasurements-btn',
-            event: 'click',
-          },
-          beforeShowPromise: () => waitForElement('#trackedMeasurements-btn'),
-        },
-        {
-          id: 'scrollAwayFromMeasurement',
-          title: 'Scrolling Away from a Measurement',
-          text: 'Scroll the images using the mouse wheel away from the measurement.',
-          attachTo: {
-            element: '.viewport-element',
-            on: 'left',
-          },
-          advanceOn: {
-            selector: '.cornerstone-viewport-element',
-            event: 'CORNERSTONE_TOOLS_MOUSE_WHEEL',
-          },
-          beforeShowPromise: () => waitForElement('.viewport-element'),
-        },
-        {
-          id: 'jumpToMeasurement',
-          title: 'Jumping to Measurements in the Panel',
-          text: 'Click the measurement in the measurement panel to jump to it.',
-          attachTo: {
-            element: '[data-cy="data-row"]',
-            on: 'left-start',
-          },
-          advanceOn: {
-            selector: '[data-cy="data-row"]',
-            event: 'click',
-          },
-          beforeShowPromise: () => waitForElement('[data-cy="data-row"]'),
         },
         {
           id: 'changeLayout',
@@ -176,20 +203,76 @@ export default {
           },
           beforeShowPromise: () => waitForElement('[data-cy="Layout"]'),
         },
+        // {
+        //   id: 'tryLayout',
+        //   title: 'Try Changing Layout',
+        //   text: 'Now try changing the layout by clicking the Layout button again.',
+        //   attachTo: {
+        //     element: '[data-cy="Layout"]',
+        //     on: 'bottom',
+        //   },
+        //   advanceOn: {
+        //     selector: '[data-cy="Layout"]',
+        //     event: 'click',
+        //   },
+        //   beforeShowPromise: () => waitForElement('[data-cy="Layout"]'),
+        // },
         {
-          id: 'selectLayout',
-          title: 'Selecting the MPR Layout',
-          text: 'Select the MPR layout to view the images in MPR mode.',
+          id: 'moreTools',
+          title: 'More Tools',
+          text: 'Access additional tools via the More Tools menu.',
           attachTo: {
-            element: '[data-cy="MPR"]',
-            on: 'left-start',
+            element: '[data-cy="Reset"]',
+            on: 'bottom',
           },
           advanceOn: {
-            selector: '[data-cy="MPR"]',
+            selector: '[data-cy="Reset"]',
             event: 'click',
           },
-          beforeShowPromise: () => waitForElement('[data-cy="MPR"]'),
+          beforeShowPromise: () => waitForElement('[data-cy="Reset"]'),
         },
+        // {
+        //   id: 'tryReset',
+        //   title: 'Try Resetting',
+        //   text: 'Now try resetting the view by clicking the Reset button again.',
+        //   attachTo: {
+        //     element: '[data-cy="Reset"]',
+        //     on: 'bottom',
+        //   },
+        //   advanceOn: {
+        //     selector: '[data-cy="Reset"]',
+        //     event: 'click',
+        //   },
+        //   beforeShowPromise: () => waitForElement('[data-cy="Reset"]'),
+        // },
+        {
+          id: 'segmentation',
+          title: 'Segmentation Tool',
+          text: 'Use the Segmentation tool to create and edit segmentations on the images.',
+          attachTo: {
+            element: '[data-cy="Brush"]',
+            on: 'bottom',
+          },
+          advanceOn: {
+            selector: '[data-cy="Brush"]',
+            event: 'click',
+          },
+          beforeShowPromise: () => waitForElement('[data-cy="Brush"]'),
+        },
+        // {
+        //   id: 'trySegmentation',
+        //   title: 'Try Segmentation',
+        //   text: 'Now try using the Segmentation tool by painting on the viewport.',
+        //   attachTo: {
+        //     element: '.viewport-element',
+        //     on: 'right',
+        //   },
+        //   advanceOn: {
+        //     selector: '.cornerstone-viewport-element',
+        //     event: 'CORNERSTONE_TOOLS_MOUSE_DRAG',
+        //   },
+        //   beforeShowPromise: () => waitForElement('.viewport-element'),
+        // },
       ],
       tourOptions: {
         useModalOverlay: true,
