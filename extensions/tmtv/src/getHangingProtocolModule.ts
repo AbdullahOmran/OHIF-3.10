@@ -14,6 +14,7 @@ import { mprPt } from './hps/mprPt';
 import { mprCt } from './hps/mprCt';
 import { mprFusion } from './hps/mprFusion';
 import { mip } from './hps/mip';
+import { comparison } from './hps/comparison';
 
 // /**
 //  * represents a 3x4 viewport layout configuration. The layout displays CT axial, sagittal, and coronal
@@ -363,6 +364,10 @@ function getHangingProtocolModule() {
     {
       name: mip.id,
       protocol: mip,
+    },
+    {
+      name: comparison.id,
+      protocol: comparison,
     },
   ];
 }

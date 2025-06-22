@@ -3,7 +3,8 @@ import { SignupPage } from '../Components/SignupPage';
 import { LoginPage } from '../Components/LoginPage';
 import { NavigatePage } from '../Components/NavigatePage';
 import { NotFoundPage } from '../Components/NotFoundPage';
-import notFound from 'platform/cli/src/commands/constants/notFound';
+// import notFound from 'platform/cli/src/commands/constants/notFound';
+import { ProfilePage } from '../Components/ProfilePage';
 
 export default {
   'routes.customRoutes': {
@@ -26,6 +27,11 @@ export default {
       {
         path: '/home',
         children: HomePage,
+        private: false,
+      },
+      {
+        path: '/profile',
+        children: ProfilePage,
         private: false,
       },
     ],

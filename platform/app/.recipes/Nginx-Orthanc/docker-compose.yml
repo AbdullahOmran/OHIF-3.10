@@ -40,7 +40,10 @@ services:
       - ./config/orthanc.json:/etc/orthanc/orthanc.json:ro
       # Persist data
       - ./volumes/orthanc-db/:/var/lib/orthanc/db/
+      # lua script
+      - ./config/script.lua:/etc/orthanc/script.lua
     restart: unless-stopped
     ports:
       - '4242:4242' # Orthanc REST API
       - '8042:8042' # Orthanc HTTP
+      - '8000:8000'

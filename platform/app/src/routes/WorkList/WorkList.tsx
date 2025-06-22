@@ -666,6 +666,12 @@ function WorkList({
           containerClassName: 'flex  max-w-4xl flex-col',
         }),
     },
+    {
+      title: 'Logout',
+      onClick: () => {
+        window.location.href = '/home';
+      },
+    },
   ];
 
   if (appConfig.oidc) {

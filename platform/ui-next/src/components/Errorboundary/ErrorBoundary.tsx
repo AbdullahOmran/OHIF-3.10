@@ -131,7 +131,7 @@ interface ErrorBoundaryProps {
 const DefaultFallback = ({
   error,
   context,
-  resetErrorBoundary = () => {},
+  resetErrorBoundary = () => { },
 }: DefaultFallbackProps) => {
   const { t } = useTranslation('ErrorBoundary');
   const [showDetails, setShowDetails] = useState(false);
@@ -231,8 +231,8 @@ const DefaultFallback = ({
 
 const ErrorBoundary = ({
   context = 'OHIF',
-  onReset = () => {},
-  onError = () => {},
+  onReset = () => { },
+  onError = () => { },
   fallbackComponent: FallbackComponent = DefaultFallback,
   children,
   fallbackRoute = null,
@@ -283,28 +283,29 @@ const ErrorBoundary = ({
   };
 
   return (
-    <ReactErrorBoundary
-      fallbackRender={props => (
-        <FallbackComponent
-          error={props.error}
-          context={context}
-          resetErrorBoundary={props.resetErrorBoundary}
-        />
-      )}
-      onReset={onResetHandler}
-      onError={(error, info) => onErrorHandler(error as ErrorBoundaryError, info.componentStack)}
-    >
-      <>
-        {children}
-        {error && (
-          <FallbackComponent
-            error={error}
-            context={context}
-            resetErrorBoundary={() => setError(null)}
-          />
-        )}
-      </>
-    </ReactErrorBoundary>
+    // <ReactErrorBoundary
+    //   fallbackRender={props => (
+    //     <FallbackComponent
+    //       error={props.error}
+    //       context={context}
+    //       resetErrorBoundary={props.resetErrorBoundary}
+    //     />
+    //   )}
+    //   onReset={onResetHandler}
+    //   onError={(error, info) => onErrorHandler(error as ErrorBoundaryError, info.componentStack)}
+    // >
+    //   <>
+    //     {children}
+    //     {error && (
+    //       <FallbackComponent
+    //         error={error}
+    //         context={context}
+    //         resetErrorBoundary={() => setError(null)}
+    //       />
+    //     )}
+    //   </>
+    // </ReactErrorBoundary>
+    <>{children}</>
   );
 };
 
