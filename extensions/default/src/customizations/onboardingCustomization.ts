@@ -143,7 +143,7 @@ export default {
           },
           advanceOn: {
             selector: '[data-cy="Capture"]',
-            event: 'click',
+            event: '',
           },
           beforeShowPromise: () => waitForElement('[data-cy="Capture"]'),
         },

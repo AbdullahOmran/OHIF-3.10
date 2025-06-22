@@ -46,12 +46,12 @@ const Onboarding: React.FC<OnboardingProps> = ({
     );
     console.log('matchingTour', matchingTour);
 
-    // if (!matchingTour || hasTourBeenShown(matchingTour.id)) {
-    //   return;
-    // }
-    if (!matchingTour) {
+    if (!matchingTour || hasTourBeenShown(matchingTour.id)) {
       return;
     }
+    // if (!matchingTour) {
+    //   return;
+    // }
 
     const tourInstance = new Shepherd.Tour({
       ...matchingTour.tourOptions,
