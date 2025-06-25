@@ -172,24 +172,24 @@ export default function PanelSegmentation({ children }: withAppTypes) {
       );
     }
 
-    return (
-      <>
-        <SegmentationTable.Expanded>
-          <SegmentationTable.Expanded.Header>
-            <SegmentationTable.Expanded.DropdownMenu>
-              <CustomDropdownMenuContent />
-            </SegmentationTable.Expanded.DropdownMenu>
-            <SegmentationTable.Expanded.Label />
-            <SegmentationTable.Expanded.Info />
-          </SegmentationTable.Expanded.Header>
+    // return (
+    //   <>
+    //     <SegmentationTable.Expanded>
+    //       <SegmentationTable.Expanded.Header>
+    //         <SegmentationTable.Expanded.DropdownMenu>
+    //           <CustomDropdownMenuContent />
+    //         </SegmentationTable.Expanded.DropdownMenu>
+    //         <SegmentationTable.Expanded.Label />
+    //         <SegmentationTable.Expanded.Info />
+    //       </SegmentationTable.Expanded.Header>
 
-          <SegmentationTable.Expanded.Content>
-            <SegmentationTable.AddSegmentRow />
-            {renderSegments()}
-          </SegmentationTable.Expanded.Content>
-        </SegmentationTable.Expanded>
-      </>
-    );
+    //       <SegmentationTable.Expanded.Content>
+    //         <SegmentationTable.AddSegmentRow />
+    //         {renderSegments()}
+    //       </SegmentationTable.Expanded.Content>
+    //     </SegmentationTable.Expanded>
+    //   </>
+    // );
   };
 
   return (
