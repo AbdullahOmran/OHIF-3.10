@@ -35,7 +35,9 @@ export const SegmentStatisticsProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ segment, segmentationId, children }) => {
   const { cachedStats } = segment || {};
-  const { namedStats } = cachedStats || {};
+  // const { namedStats } = cachedStats || {};
+
+  const namedStats = segment?.cachedStats?.namedStats;
 
   return (
     <SegmentStatisticsContext.Provider value={{ segment, namedStats, segmentationId }}>
@@ -43,3 +45,11 @@ export const SegmentStatisticsProvider: React.FC<{
     </SegmentStatisticsContext.Provider>
   );
 };
+// segment: {
+//   segmentIndex: number;
+//   cachedStats: any;
+// };
+// const { cachedStats } = segment || {};
+//   const { namedStats } = cachedStats || {};
+
+// const namedStats = segment?.cachedStats?.namedStats;
