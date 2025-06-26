@@ -20,8 +20,8 @@ export const SegmentationSegments = ({ children = null }: { children?: React.Rea
     AllSegmentations,
   } = useSegmentationTableContext('SegmentationSegments');
 
-  console.log('AllSegmentations WASAAAAl: ', AllSegmentations);
-  console.log('WHOLE DATA :', data);
+  console.log('Segmentations in ALL VIEWPORTS: ', AllSegmentations);
+  console.log('Segmentations in ActiveViewport :', data);
 
   AllSegmentations.forEach((segmentation, index) => {
     console.log(`${segmentation.label}:`);
@@ -36,7 +36,7 @@ export const SegmentationSegments = ({ children = null }: { children?: React.Rea
   });
 
   // data.map((entry, entryIndex) => {
-  //   console.log(`\nENTRYYYYYYYY DATA ${entryIndex}:`);
+  //   console.log(`\nENTRY DATA ${entryIndex}:`);
   //   for (const [key, segment] of Object.entries(entry.segmentation.segments)) {
   //     const namedStats = segment?.cachedStats?.namedStats;
   //     console.log(`  Segment ${key} namedStats:`, namedStats || 'No namedStats for this segment.');
