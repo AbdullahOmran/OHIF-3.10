@@ -93,23 +93,23 @@ function modeFactory({ modeConfiguration }) {
           );
         }
       );
-      const { unsubscribe: unsubscribe2 } = hangingProtocolService.subscribe(
-        hangingProtocolService.EVENTS.PROTOCOL_CHANGED,
-        () => {
-          const segs = segmentationService.getSegmentations();
-          if (segs.length > 0) {
-            console.log(segs[0]);
-            const { segmentationId, representationData } = segs[0];
-            const { Labelmap } = representationData;
-            const { volumeId } = Labelmap;
-            segmentationService.remove(segmentationId);
-            const labelmapVolume = cs.cache.getVolume(volumeId);
-            cs.cache.removeVolumeLoadObject(volumeId);
-          }
-        }
-      );
+      // const { unsubscribe: unsubscribe2 } = hangingProtocolService.subscribe(
+      //   hangingProtocolService.EVENTS.PROTOCOL_CHANGED,
+      //   () => {
+      //     const segs = segmentationService.getSegmentations();
+      //     if (segs.length > 0) {
+      //       console.log(segs[0]);
+      //       const { segmentationId, representationData } = segs[0];
+      //       const { Labelmap } = representationData;
+      //       const { volumeId } = Labelmap;
+      //       segmentationService.remove(segmentationId);
+      //       const labelmapVolume = cs.cache.getVolume(volumeId);
+      //       cs.cache.removeVolumeLoadObject(volumeId);
+      //     }
+      //   }
+      // );
       unsubscriptions.push(unsubscribe);
-      unsubscriptions.push(unsubscribe2);
+      // unsubscriptions.push(unsubscribe2);
 
       toolbarService.addButtons(toolbarButtons);
       toolbarService.createButtonSection('primary', [

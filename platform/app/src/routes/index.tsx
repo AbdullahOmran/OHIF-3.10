@@ -123,7 +123,7 @@ const createRoutes = ({
     ...(showStudyList ? [WorkListRoute] : []),
     ...(customRoutes?.routes || []),
     ...bakedInRoutes,
-    // notFoundRoute,
+    notFoundRoute,
   ];
 
   function RouteWithErrorBoundary({ route, ...rest }) {
