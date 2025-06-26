@@ -8,11 +8,12 @@ export default function PanelSegmentation({ children }: withAppTypes) {
   const { commandsManager, servicesManager } = useSystem();
   const { customizationService, displaySetService } = servicesManager.services;
 
-  const { segmentationsWithRepresentations, disabled } =
+  const { segmentationsWithRepresentations, AllSegmentations, disabled } =
     useActiveViewportSegmentationRepresentations({
       servicesManager,
     });
 
+  // console.log('AllSegmentations', AllSegmentations);
   // Extract customization options
   const segmentationTableMode = customizationService.getCustomization(
     'panelSegmentation.tableMode'
@@ -98,7 +99,7 @@ export default function PanelSegmentation({ children }: withAppTypes) {
   };
 
   // Generate export options
-  const exportOptions = segmentationsWithRepresentations.map(({ segmentation }) => {
+  const exportOptions = segmentationsWithRepresentations?.map(({ segmentation }) => {
     const { representationData, segmentationId } = segmentation;
     const { Labelmap } = representationData;
 
@@ -130,6 +131,7 @@ export default function PanelSegmentation({ children }: withAppTypes) {
   // Common props for SegmentationTable
   const tableProps = {
     disabled,
+    AllSegmentations,
     data: segmentationsWithRepresentations,
     mode: segmentationTableMode,
     title: 'Segmentations',
