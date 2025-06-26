@@ -6,7 +6,7 @@ const Dialog = ({ isOpen, onClose, children }) => {
   }
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 text-white">
-      <div className="max-h-[80vh] w-full max-w-4xl overflow-y-auto rounded-lg p-6">
+      <div className="bg-primary-dark max-h-[80vh] w-full max-w-4xl overflow-y-auto rounded-lg p-6">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-semibold">Compare Segments Statistics</h2>
           <button

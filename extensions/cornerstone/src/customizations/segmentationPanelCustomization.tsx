@@ -14,7 +14,7 @@ export default function getSegmentationPanelCustomization({ commandsManager, ser
       const viewportId = viewportGridService.getState().activeViewportId;
       commandsManager.run('createLabelmapForViewport', { viewportId });
     },
-    'panelSegmentation.tableMode': 'collapsed',
+    'panelSegmentation.tableMode': 'expanded',
     'panelSegmentation.readableText': {
       // the values will appear in this order
       min: 'Min Value',
