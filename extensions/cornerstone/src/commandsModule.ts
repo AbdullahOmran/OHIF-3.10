@@ -1203,6 +1203,7 @@ function commandsModule({
         options.displaySetInstanceUID || viewport.displaySetInstanceUIDs[0];
 
       const segs = segmentationService.getSegmentations();
+      console.log('commandsMODULE ', segs);
 
       const label = options.label || `Segmentation ${segs.length + 1}`;
       const segmentationId = options.segmentationId || `${csUtils.uuidv4()}`;
