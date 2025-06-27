@@ -145,11 +145,11 @@ module.exports = {
       },
       navbar: {
         hideOnScroll: false,
-        logo: {
-          alt: 'OHIF Logo',
-          src: 'img/ohif-logo-light.svg',
-          srcDark: 'img/ohif-logo.svg',
-        },
+        // logo: {
+        //   alt: 'OHIF Logo',
+        //   src: 'img/ohif-logo-light.svg',
+        //   srcDark: 'img/ohif-logo.svg',
+        // },
         items: [
           {
             position: 'left',

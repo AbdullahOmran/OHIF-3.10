@@ -55,56 +55,56 @@ function ToolbarLayoutSelectorWithServices({
   const advancedPresets = advancedPresetsGenerator
     ? advancedPresetsGenerator({ servicesManager })
     : [
-      {
-        title: 'MPR',
-        icon: 'layout-three-col',
-        commandOptions: {
-          protocolId: 'mpr',
+        {
+          title: 'MPR',
+          icon: 'layout-three-col',
+          commandOptions: {
+            protocolId: 'mpr',
+          },
         },
-      },
-      {
-        title: '3D four up',
-        icon: 'layout-four-up',
-        commandOptions: {
-          protocolId: '3d-four-up',
+        {
+          title: '3D four up',
+          icon: 'layout-four-up',
+          commandOptions: {
+            protocolId: '3d-four-up',
+          },
         },
-      },
-      {
-        title: '3D main',
-        icon: 'layout-three-row',
-        commandOptions: {
-          protocolId: '3d-main',
+        {
+          title: '3D main',
+          icon: 'layout-three-row',
+          commandOptions: {
+            protocolId: '3d-main',
+          },
         },
-      },
-      {
-        title: 'Axial Primary',
-        icon: 'layout-side-by-side',
-        commandOptions: {
-          protocolId: 'axial-primary',
+        {
+          title: 'Axial Primary',
+          icon: 'layout-side-by-side',
+          commandOptions: {
+            protocolId: 'axial-primary',
+          },
         },
-      },
-      {
-        title: '3D only',
-        icon: 'layout-single',
-        commandOptions: {
-          protocolId: '3d-only',
+        {
+          title: '3D only',
+          icon: 'layout-single',
+          commandOptions: {
+            protocolId: '3d-only',
+          },
         },
-      },
-      {
-        title: '3D primary',
-        icon: 'layout-side-by-side',
-        commandOptions: {
-          protocolId: '3d-primary',
+        {
+          title: '3D primary',
+          icon: 'layout-side-by-side',
+          commandOptions: {
+            protocolId: '3d-primary',
+          },
         },
-      },
-      {
-        title: 'Frame View',
-        icon: 'icon-stack',
-        commandOptions: {
-          protocolId: 'frame-view',
+        {
+          title: 'Frame View',
+          icon: 'icon-stack',
+          commandOptions: {
+            protocolId: 'frame-view',
+          },
         },
-      },
-    ];
+      ];
 
   // Unified selection handler that dispatches to the appropriate command
   const handleSelectionChange = useCallback(
@@ -140,7 +140,7 @@ function ToolbarLayoutSelectorWithServices({
           {/* Left side - Presets */}
           {(commonPresets.length > 0 || advancedPresets.length > 0) && (
             <div className="bg-popover flex flex-col gap-2.5 rounded-lg p-2">
-              {/* {commonPresets.length > 0 && (
+              {commonPresets.length > 0 && (
                 <>
                   <LayoutSelector.PresetSection title="Common">
                     {commonPresets.map((preset, index) => (
@@ -154,7 +154,7 @@ function ToolbarLayoutSelectorWithServices({
                   </LayoutSelector.PresetSection>
                   <LayoutSelector.Divider />
                 </>
-              )} */}
+              )}
 
               {advancedPresets.length > 0 && (
                 <LayoutSelector.PresetSection title="Layout">

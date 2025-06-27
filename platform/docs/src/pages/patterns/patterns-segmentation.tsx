@@ -41,7 +41,7 @@ import {
   HoverCard,
   HoverCardTrigger,
   HoverCardContent,
-} from '../../../../ui-next/src/components/HoverCard';
+} from '../../../../ui-next/src/components/PopupCard';
 import { DataItem, ListGroup } from '../../../../ui-next/assets/data';
 export default function SegmentationPanel() {
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);

@@ -21,8 +21,8 @@ function Header({ appLogo = OHIFLogo(), children, t }) {
         <div className="mx-3">{appLogo}</div>
         <div>{children}</div>
       </div>
-      <div className="flex items-center">
-        <span className="text-common-light mr-3 text-lg">{t('FOR INVESTIGATIONAL USE ONLY')}</span>
+      {/* <div className="flex items-center">
+        <span className="text-common-light mr-3 text-lg">{t('FOR INVESTIGATIONAL USE ONLY')}</span> */}
         <IconButton
           variant="text"
           color="inherit"

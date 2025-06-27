@@ -97,7 +97,7 @@ function modeFactory({ modeConfiguration }) {
       );
 
       unsubscriptions.push(unsubscribe);
-
+      
       toolbarService.addButtons(toolbarButtons);
       toolbarService.createButtonSection('primary', [
         '3dView',

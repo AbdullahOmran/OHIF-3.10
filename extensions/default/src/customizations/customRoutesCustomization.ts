@@ -2,6 +2,8 @@ import { HomePage } from '../Components/HomePage';
 import { SignupPage } from '../Components/SignupPage';
 import { LoginPage } from '../Components/LoginPage';
 import { NavigatePage } from '../Components/NavigatePage';
+import { NotFoundPage } from '../Components/NotFoundPage';
+// import notFound from 'platform/cli/src/commands/constants/notFound';
 import { ProfilePage } from '../Components/ProfilePage';
 
 export default {
@@ -33,6 +35,6 @@ export default {
         private: false,
       },
     ],
-    notFoundRoute: null,
+    notFoundRoute: { component: NotFoundPage },
   },
 };
