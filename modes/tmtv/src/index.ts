@@ -59,6 +59,7 @@ function modeFactory({ modeConfiguration }) {
         hangingProtocolService,
         displaySetService,
         segmentationService,
+        dicomMetadataStore,
       } = servicesManager.services;
 
       const utilityModule = extensionManager.getModuleEntry(
@@ -76,6 +77,7 @@ function modeFactory({ modeConfiguration }) {
           // For fusion toolGroup we need to add the volumeIds for the crosshairs
           // since in the fusion viewport we don't want both PT and CT to render MIP
           // when slabThickness is modified
+
           const { displaySetMatchDetails } = hangingProtocolService.getMatchDetails();
 
           setCrosshairsConfiguration(
@@ -93,23 +95,8 @@ function modeFactory({ modeConfiguration }) {
           );
         }
       );
-      const { unsubscribe: unsubscribe2 } = hangingProtocolService.subscribe(
-        hangingProtocolService.EVENTS.PROTOCOL_CHANGED,
-        () => {
-          const segs = segmentationService.getSegmentations();
-          if (segs.length > 0) {
-            console.log(segs[0]);
-            const { segmentationId, representationData } = segs[0];
-            const { Labelmap } = representationData;
-            const { volumeId } = Labelmap;
-            segmentationService.remove(segmentationId);
-            const labelmapVolume = cs.cache.getVolume(volumeId);
-            cs.cache.removeVolumeLoadObject(volumeId);
-          }
-        }
-      );
+
       unsubscriptions.push(unsubscribe);
-      unsubscriptions.push(unsubscribe2);
 
       toolbarService.addButtons(toolbarButtons);
       toolbarService.createButtonSection('primary', [
@@ -206,6 +193,80 @@ function modeFactory({ modeConfiguration }) {
           return;
         }
       );
+      const { unsubscribe: unsubscribe2 } = hangingProtocolService.subscribe(
+        hangingProtocolService.EVENTS.PROTOCOL_CHANGED,
+        async event => {
+          console.log('Hanging protocol changed:', event);
+
+          // Wait for protocol to be fully applied
+          setTimeout(async () => {
+            // Get current viewport match details
+            const { viewportMatchDetails } = hangingProtocolService.getMatchDetails();
+
+            // Check if we have CT data loaded
+            if (viewportMatchDetails) {
+              try {
+                await commandsManager.runCommand('segmentProstate', {
+                  label: 'AI-Generated Segmentation',
+                });
+              } catch (error) {
+                console.error('Auto-segmentation failed:', error);
+              }
+            }
+          }, 5000);
+        }
+      );
+      unsubscriptions.push(unsubscribe2);
+      ///////////////////////////////////////////////////////////////////////////////
+      // const onSeriesAdded = ({ StudyInstanceUID, madeInClient = false }) => {
+      //   const studyMetadata = dicomMetadataStore.getStudy(StudyInstanceUID);
+      //   alert('');
+      //   // Adding custom attribute to the hangingprotocol
+      //   // hangingProtocolService.addCustomAttribute('timepoint', 'timepoint', metaData =>
+      //   //   getFirstMeasurementSeriesInstanceUID(metaData)
+      //   // );
+
+      //   // hangingProtocolService.run(studyMetadata);
+      // };
+      // dicomMetadataStore.subscribe(dicomMetadataStore.EVENTS.SERIES_ADDED, onSeriesAdded);
+      /////////////////////////////////////////////////////////////////////////////////
+      // Track already selected studies to ensure unique dates
+      // const selectedStudies = [];
+
+      // Custom attribute function that has access to selected studies
+      // const uniqueDateAttribute = metaData => {
+      //   console.log('ggggggggggggggggggggggggggggggggggggggggggggggggggggggggg');
+      //   const studyDate = metaData.StudyDate;
+
+      //   if (!studyDate) {
+      //     return false;
+      //   }
+
+      //   // Check if this study date is already in our selected studies
+      //   const isDateAlreadySelected = selectedStudies.some(study => study.StudyDate === studyDate);
+      //   console.log(metaData.StudyInstanceUID);
+      //   console.log(selectedStudies);
+
+      //   // If date is unique, add this study to selected studies
+      //   if (!isDateAlreadySelected) {
+      //     selectedStudies.push({
+      //       StudyDate: studyDate,
+      //       StudyInstanceUID: metaData.StudyInstanceUID,
+      //     });
+      //     return true;
+      //   }
+
+      //   return false;
+      // };
+
+      // // Register the custom attribute with HangingProtocolService
+      // hangingProtocolService.addCustomAttribute(
+      //   'uniqueStudyDate', // attribute name used in protocol
+      //   'Unique Study Date', // display name
+      //   uniqueDateAttribute // the function that evaluates the attribute
+      // );
+
+      ////////////////////////////////////////////////////////////////////////////////
     },
     onModeExit: ({ servicesManager }: withAppTypes) => {
       const {
