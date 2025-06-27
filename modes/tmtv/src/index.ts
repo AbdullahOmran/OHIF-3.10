@@ -24,12 +24,17 @@ const cs3d = {
 
 const tmtv = {
   // hangingProtocol: '@ohif/extension-tmtv.hangingProtocolModule.ptCT',
-  hangingProtocol: '@ohif/extension-tmtv.hps.mprFusion',
+  hangingProtocol: '@ohif/extension-tmtv.hps.hpPdfReport',
   petSUV: '@ohif/extension-tmtv.panelModule.petSUV',
   tmtv: '@ohif/extension-tmtv.panelModule.tmtv',
 
   sopClassHandler: '@ohif/extension-cornerstone-dicom-seg.sopClassHandlerModule.dicom-seg',
   viewport: '@ohif/extension-cornerstone-dicom-seg.viewportModule.dicom-seg',
+};
+
+const dicompdf = {
+  sopClassHandler: '@ohif/extension-dicom-pdf.sopClassHandlerModule.dicom-pdf',
+  viewport: '@ohif/extension-dicom-pdf.viewportModule.dicom-pdf',
 };
 
 const extensionDependencies = {
@@ -38,6 +43,7 @@ const extensionDependencies = {
   '@ohif/extension-cornerstone': '^3.0.0',
   '@ohif/extension-cornerstone-dicom-seg': '^3.0.0',
   '@ohif/extension-tmtv': '^3.0.0',
+  '@ohif/extension-dicom-pdf': '^3.0.1',
 };
 
 const unsubscriptions = [];
@@ -97,7 +103,7 @@ function modeFactory({ modeConfiguration }) {
       );
 
       unsubscriptions.push(unsubscribe);
-      
+
       toolbarService.addButtons(toolbarButtons);
       toolbarService.createButtonSection('primary', [
         '3dView',
@@ -193,30 +199,30 @@ function modeFactory({ modeConfiguration }) {
           return;
         }
       );
-      const { unsubscribe: unsubscribe2 } = hangingProtocolService.subscribe(
-        hangingProtocolService.EVENTS.PROTOCOL_CHANGED,
-        async event => {
-          console.log('Hanging protocol changed:', event);
+      // const { unsubscribe: unsubscribe2 } = hangingProtocolService.subscribe(
+      //   hangingProtocolService.EVENTS.PROTOCOL_CHANGED,
+      //   async event => {
+      //     console.log('Hanging protocol changed:', event);
 
-          // Wait for protocol to be fully applied
-          setTimeout(async () => {
-            // Get current viewport match details
-            const { viewportMatchDetails } = hangingProtocolService.getMatchDetails();
+      //     // Wait for protocol to be fully applied
+      //     setTimeout(async () => {
+      //       // Get current viewport match details
+      //       const { viewportMatchDetails } = hangingProtocolService.getMatchDetails();
 
-            // Check if we have CT data loaded
-            if (viewportMatchDetails) {
-              try {
-                await commandsManager.runCommand('segmentProstate', {
-                  label: 'AI-Generated Segmentation',
-                });
-              } catch (error) {
-                console.error('Auto-segmentation failed:', error);
-              }
-            }
-          }, 5000);
-        }
-      );
-      unsubscriptions.push(unsubscribe2);
+      //       // Check if we have CT data loaded
+      //       if (viewportMatchDetails) {
+      //         try {
+      //           await commandsManager.runCommand('segmentProstate', {
+      //             label: 'AI-Generated Segmentation',
+      //           });
+      //         } catch (error) {
+      //           console.error('Auto-segmentation failed:', error);
+      //         }
+      //       }
+      //     }, 5000);
+      //   }
+      // );
+      // unsubscriptions.push(unsubscribe2);
       ///////////////////////////////////////////////////////////////////////////////
       // const onSeriesAdded = ({ StudyInstanceUID, madeInClient = false }) => {
       //   const studyMetadata = dicomMetadataStore.getStudy(StudyInstanceUID);
@@ -336,6 +342,10 @@ function modeFactory({ modeConfiguration }) {
                   namespace: tmtv.viewport,
                   displaySetsToDisplay: [tmtv.sopClassHandler],
                 },
+                {
+                  namespace: dicompdf.viewport,
+                  displaySetsToDisplay: [dicompdf.sopClassHandler],
+                },
               ],
             },
           };
@@ -344,7 +354,7 @@ function modeFactory({ modeConfiguration }) {
     ],
     extensions: extensionDependencies,
     hangingProtocol: tmtv.hangingProtocol,
-    sopClassHandlers: [ohif.sopClassHandler, tmtv.sopClassHandler],
+    sopClassHandlers: [ohif.sopClassHandler, tmtv.sopClassHandler, dicompdf.sopClassHandler],
     ...modeConfiguration,
   };
 }

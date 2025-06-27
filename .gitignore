@@ -58,3 +58,4 @@ tests/playwright-report/
 /blob-report/
 /playwright/.cache/
 testdata
+yarn.lock
