@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const AlertModal = ({ message, onClose }) => {
   return (
@@ -17,10 +17,12 @@ const AlertModal = ({ message, onClose }) => {
     </div>
   );
 };
+
 export const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showAlert, setShowAlert] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -30,58 +32,53 @@ export const LoginPage = () => {
     };
 
     try {
-      const response = await fetch('http://localhost:8000/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
+      // const response = await fetch('http://localhost:8000/login', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify(payload),
+      // });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'Login failed');
-      }
+      // if (!response.ok) {
+      //   const errorData = await response.json();
+      //   throw new Error(errorData.detail || 'Login failed');
+      // }
 
-      const data = await response.json();
-      localStorage.setItem('user', JSON.stringify(data));
-      setShowAlert(true);
-
-      // TODO: Store user info, navigate to dashboard, etc.
+      // const data = await response.json();
+      // localStorage.setItem('user', JSON.stringify(data));
+      window.location.href = '/study-list';
+      // navigate('/study-list');
     } catch (error) {
       console.error('Login error:', error.message);
       // TODO: Show error to user
     }
   };
+
   const handleAlertClose = () => {
     setShowAlert(false);
-    window.location.href = '/study-list'; // or use navigate("/login") if using React Router
+    navigate('/study-list');
   };
+
   return (
     <>
       <div className="flex min-h-screen flex-col bg-black text-white">
         {/* Header */}
-        <header className="w-full border-b border-gray-800 py-6 px-4 sm:px-6 lg:px-8">
+        <header className="bg-primary-dark w-full border-b border-gray-800 py-6 px-4 sm:px-6 lg:px-8">
           <div className="mx-auto flex max-w-7xl items-center justify-between">
             <h1 className="text-2xl font-bold">TherAInostics</h1>
             <nav className="space-x-4">
-              <Link
+              {/* <Link
                 to="/home"
                 className="text-blue-400 hover:text-blue-300"
               >
                 Home
-              </Link>
+              </Link> */}
               <Link
                 to="/signup"
                 className="text-blue-400 hover:text-blue-300"
               >
                 Signup
-              </Link>
-              <Link
-                to="/study-list"
-                className="text-blue-400 hover:text-blue-300"
-              >
-                Study List
               </Link>
             </nav>
           </div>
@@ -113,7 +110,6 @@ export const LoginPage = () => {
                     name="email"
                     type="email"
                     autoComplete="email"
-                    // required
                     className="relative block w-full appearance-none rounded-md border border-gray-700 bg-gray-900 px-3 py-2 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
                     placeholder="Email address"
                     value={email}
@@ -132,7 +128,6 @@ export const LoginPage = () => {
                     name="password"
                     type="password"
                     autoComplete="current-password"
-                    // required
                     className="relative block w-full appearance-none rounded-md border border-gray-700 bg-gray-900 px-3 py-2 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
                     placeholder="Password"
                     value={password}
@@ -156,7 +151,6 @@ export const LoginPage = () => {
                 to="/signup"
                 className="font-medium text-blue-400 hover:text-blue-300"
               >
-                {' '}
                 Sign up
               </Link>
             </p>
@@ -165,7 +159,7 @@ export const LoginPage = () => {
 
         {/* Footer */}
         <footer className="w-full border-t border-gray-800 py-4 px-4 text-center text-gray-400 sm:px-6 lg:px-8">
-          <p>&copy; 2025 TherAInostics. All rights reserved.</p>
+          <p>© 2025 TherAInostics. All rights reserved.</p>
         </footer>
       </div>
       {showAlert && (

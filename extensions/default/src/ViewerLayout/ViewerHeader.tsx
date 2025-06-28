@@ -48,7 +48,7 @@ function ViewerHeader({ appConfig }: withAppTypes<{ appConfig: AppTypes.Config }
       onClick: () =>
         show({
           content: AboutModal,
-          title: t('AboutModal:About TherAInostics Viewer'),
+          title: t('AboutModal:About TherAInostics'),
           containerClassName: 'max-w-md',
         }),
     },

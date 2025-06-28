@@ -444,6 +444,18 @@ function WorkList({
   // Debug: Log studies for table data source
   console.log('Studies for tableDataSource:', sortedStudies.slice(offset, offsetAndTake));
 
+  const getStableClassification = studyInstanceUid => {
+    let hash = 0;
+    for (let i = 0; i < studyInstanceUid.length; i++) {
+      const char = studyInstanceUid.charCodeAt(i);
+      hash = (hash << 5) - hash + char;
+      hash = hash & hash; // Convert to 32-bit integer
+    }
+
+    // Use absolute value to ensure positive number, then check if even/odd
+    return Math.abs(hash) % 2 === 0 ? 'healthy' : 'suspicious';
+  };
+
   const tableDataSource = sortedStudies.map((study, key) => {
     const rowKey = key + 1;
     const isExpanded = expandedRows.some(k => k === rowKey);
@@ -461,7 +473,7 @@ function WorkList({
 
     console.log('Study: ', study);
 
-    const classification = null;
+    const classification = getStableClassification(studyInstanceUid);
 
     const studyDate =
       date &&
@@ -641,24 +653,24 @@ function WorkList({
   const menuOptions = [
     {
       title: 'Profile',
-      icon: 'info',
+      // icon: 'info',
       onClick: () => {
         window.location.href = '/profile';
       },
     },
     {
       title: t('Header:About'),
-      icon: 'info',
+      // icon: 'info',
       onClick: () =>
         show({
           content: AboutModal as React.ComponentType,
-          title: t('AboutModal:About TherAInostics Viewer'),
+          title: t('AboutModal:About TherAInostics'),
           containerClassName: 'max-w-md ',
         }),
     },
     {
       title: t('Header:Preferences'),
-      icon: 'settings',
+      // icon: 'settings',
       onClick: () =>
         show({
           title: t('UserPreferencesModal:User preferences'),

@@ -97,7 +97,7 @@ function modeFactory({ modeConfiguration }) {
       );
 
       unsubscriptions.push(unsubscribe);
-      
+
       toolbarService.addButtons(toolbarButtons);
       toolbarService.createButtonSection('primary', [
         '3dView',
@@ -193,30 +193,34 @@ function modeFactory({ modeConfiguration }) {
           return;
         }
       );
-      const { unsubscribe: unsubscribe2 } = hangingProtocolService.subscribe(
-        hangingProtocolService.EVENTS.PROTOCOL_CHANGED,
-        async event => {
-          console.log('Hanging protocol changed:', event);
+      // const { unsubscribe: unsubscribe2 } = hangingProtocolService.subscribe(
+      //   hangingProtocolService.EVENTS.PROTOCOL_CHANGED,
+      //   async event => {
+      //     console.log('Hanging protocol changed:', event);
 
-          // Wait for protocol to be fully applied
-          setTimeout(async () => {
-            // Get current viewport match details
-            const { viewportMatchDetails } = hangingProtocolService.getMatchDetails();
+      //     // Wait for protocol to be fully applied
+      //     setTimeout(async () => {
+      //       // Get current viewport match details
+      //       const { viewportMatchDetails } = hangingProtocolService.getMatchDetails();
 
-            // Check if we have CT data loaded
-            if (viewportMatchDetails) {
-              try {
-                await commandsManager.runCommand('segmentProstate', {
-                  label: 'AI-Generated Segmentation',
-                });
-              } catch (error) {
-                console.error('Auto-segmentation failed:', error);
-              }
-            }
-          }, 5000);
-        }
-      );
-      unsubscriptions.push(unsubscribe2);
+      //       // Check if we have CT data loaded
+      //       if (viewportMatchDetails) {
+      //         try {
+      //           await commandsManager.runCommand('segmentProstate', {
+      //             label: 'Prostate Segmentation',
+      //           });
+
+      //           await commandsManager.runCommand('segmentLesions', {
+      //             label: 'Lesions Segmentation',
+      //           });
+      //         } catch (error) {
+      //           console.error('Auto-segmentation failed:', error);
+      //         }
+      //       }
+      //     }, 5000);
+      //   }
+      // );
+      // unsubscriptions.push(unsubscribe2);
       ///////////////////////////////////////////////////////////////////////////////
       // const onSeriesAdded = ({ StudyInstanceUID, madeInClient = false }) => {
       //   const studyMetadata = dicomMetadataStore.getStudy(StudyInstanceUID);

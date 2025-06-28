@@ -68,7 +68,7 @@ const InvestigationalUseDialog = ({
           <Icons.InvestigationalUse className="h-18 w-18" />
           <div className="flex flex-col">
             <div className="text-[19px] text-white">
-              TherAInostics Viewer is{' '}
+              TherAInostics is{' '}
               <span className="text-primary-light">for investigational use only</span>
             </div>
             <div className="text-[13px] text-white">
@@ -76,7 +76,7 @@ const InvestigationalUseDialog = ({
                 className="text-primary-active cursor-pointer"
                 onClick={() => window.open('https://ohif.org/', '_blank')}
               >
-                Learn more about TherAInostics Viewer
+                Learn more about TherAInostics
               </span>
             </div>
           </div>
