@@ -2,6 +2,9 @@ import { classes } from '@ohif/core';
 import toolbarButtons from './toolbarButtons';
 import { id } from './id.js';
 import * as cs from '@cornerstonejs/core';
+
+import { eventTarget } from '@cornerstonejs/core';
+// import { csToolsEnums } from '@cornerstonejs/tools';
 import initToolGroups from './initToolGroups.js';
 import setCrosshairsConfiguration from './utils/setCrosshairsConfiguration.js';
 import setFusionActiveVolume from './utils/setFusionActiveVolume.js';
@@ -193,6 +196,47 @@ function modeFactory({ modeConfiguration }) {
           return;
         }
       );
+      // Method 1: Using ServicesManager (Recommended)
+      const createCustomEvent = (eventName, detail) => {
+        if (typeof CustomEvent !== 'undefined') {
+          return new CustomEvent(eventName, { detail });
+        } else {
+          // Fallback for older environments
+          const event = document.createEvent('CustomEvent');
+          event.initCustomEvent(eventName, false, false, detail);
+          return event;
+        }
+      };
+      function triggerSegmentationDataModified(servicesManager, segmentationId) {
+        try {
+          eventTarget.dispatchEvent(
+            createCustomEvent('CORNERSTONE_TOOLS_SEGMENTATION_DATA_MODIFIED', {
+              segmentationId,
+              source: 'programmatic',
+              timestamp: Date.now(),
+            })
+          );
+          // const pubSubService = servicesManager.services.pubSubService;
+
+          // if (!pubSubService) {
+          //   console.error('PubSubService not available');
+          //   return false;
+          // }
+
+          // // Trigger SEGMENTATION_DATA_MODIFIED event
+          // pubSubService.publish(Enums.Events.SEGMENTATION_DATA_MODIFIED, {
+          //   segmentationId: segmentationId,
+          //   source: 'programmatic_edit',
+          //   timestamp: Date.now(),
+          // });
+
+          // console.log(`SEGMENTATION_DATA_MODIFIED triggered for: ${segmentationId}`);
+          // return true;
+        } catch (error) {
+          console.error('Error triggering SEGMENTATION_DATA_MODIFIED:', error);
+          return false;
+        }
+      }
       const { unsubscribe: unsubscribe2 } = hangingProtocolService.subscribe(
         hangingProtocolService.EVENTS.PROTOCOL_CHANGED,
         async event => {
@@ -209,11 +253,16 @@ function modeFactory({ modeConfiguration }) {
                 await commandsManager.runCommand('segmentProstate', {
                   label: 'AI-Generated Segmentation',
                 });
+                const segmentations = segmentationService.getSegmentations();
+
+                segmentations.forEach(segmentation => {
+                  triggerSegmentationDataModified(servicesManager, segmentation.segmentationId);
+                });
               } catch (error) {
                 console.error('Auto-segmentation failed:', error);
               }
             }
-          }, 5000);
+          }, 15000);
         }
       );
       unsubscriptions.push(unsubscribe2);
