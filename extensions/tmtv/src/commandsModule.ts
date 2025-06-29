@@ -242,9 +242,10 @@ const commandsModule = ({ servicesManager, commandsManager, extensionManager }: 
           return { success: false, error: 'CT viewport not found' };
         }
 
-        const currentSegmentations =
-          segmentationService.getSegmentationRepresentations(ctViewportId);
-        const segmentedProstate = currentSegmentations.filter(seg => seg.id === 'prostate');
+        const currentSegmentations = segmentationService.getSegmentations();
+        const segmentedProstate = currentSegmentations.filter(
+          seg => seg.segmentationId === 'prostate'
+        );
 
         if (segmentedProstate.length > 0) {
           console.log('Prostate segmentation already exists');
