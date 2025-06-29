@@ -8,15 +8,15 @@ interface LabelProps {
 }
 
 const labelStyles: Record<LabelType, string> = {
-  healthy: 'bg-[#2a3110] text-[#008A2E] border-[#008A2E]',
-  suspicious: 'bg-[#2a3110] text-[#db9210] border-[#db9210]',
-  error: 'bg-red-100 text-red-800 border-red-200',
+  healthy: 'bg-[#2a3110] text-[#008A2E] border-[#2a3110]',
+  suspicious: 'bg-orange-900 text-orange-300 border-orange-900',
+  error: 'bg-red-900 text-red-300 border-red-300',
 };
 
 export function Label({ type, children }: LabelProps) {
   return (
     <span
-      className={`ml-5 inline-block rounded-full border px-3 py-1 text-xs font-medium ${labelStyles[type]}`}
+      className={`red ml-5 inline-block rounded-full border-2 px-3 py-1 text-xs font-medium ${labelStyles[type]}`}
     >
       {children}
     </span>

@@ -88,6 +88,7 @@ type ViewportSegmentationRepresentation = {
     representation: SegmentationRepresentation;
     segmentation: SegmentationData;
   }[];
+  AllSegmentations: SegmentationData[];
   disabled: boolean;
 };
 
@@ -110,6 +111,7 @@ export function useActiveViewportSegmentationRepresentations({
   const [segmentationsWithRepresentations, setSegmentationsWithRepresentations] =
     useState<ViewportSegmentationRepresentation>({
       segmentationsWithRepresentations: [],
+      AllSegmentations: [],
       disabled: false,
     });
 
@@ -131,22 +133,28 @@ export function useActiveViewportSegmentationRepresentations({
       if (excludedModalities.includes(displaySet.Modality)) {
         setSegmentationsWithRepresentations(prev => ({
           segmentationsWithRepresentations: [],
+          AllSegmentations: [],
           disabled: true,
         }));
         return;
       }
 
       const segmentations = segmentationService.getSegmentations();
+      const AllSegmentations = segmentationService.getSegmentations();
+      // console.log('1111segmentations', AllSegmentations);
 
       if (!segmentations?.length) {
         setSegmentationsWithRepresentations(prev => ({
           segmentationsWithRepresentations: [],
+          AllSegmentations: [],
           disabled: false,
         }));
         return;
       }
 
+      // pass all viewports OR get all representations in another way
       const representations = segmentationService.getSegmentationRepresentations(viewportId);
+      // console.log('2222representations', representations);
 
       const newSegmentationsWithRepresentations = representations.map(representation => {
         const segmentation = segmentationService.getSegmentation(representation.segmentationId);
@@ -159,6 +167,7 @@ export function useActiveViewportSegmentationRepresentations({
 
       setSegmentationsWithRepresentations({
         segmentationsWithRepresentations: newSegmentationsWithRepresentations,
+        AllSegmentations,
         disabled: false,
       });
     };

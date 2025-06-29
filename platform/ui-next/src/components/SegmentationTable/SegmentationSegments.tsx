@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ScrollArea, DataRow } from '../../components';
-import { HoverCard, HoverCardTrigger, HoverCardContent } from '../../components/HoverCard';
+import { PopupCard, PopupCardTrigger, PopupCardContent } from '../PopupCard';
 import { useSegmentationTableContext, useSegmentationExpanded } from './contexts';
 import { SegmentStatistics } from './SegmentStatistics';
 import { useDynamicMaxHeight } from '../../hooks/useDynamicMaxHeight';
+import CompareSegs from './CompareSegs';
 
 export const SegmentationSegments = ({ children = null }: { children?: React.ReactNode }) => {
   const {
@@ -16,19 +17,40 @@ export const SegmentationSegments = ({ children = null }: { children?: React.Rea
     onSegmentEdit,
     onSegmentDelete,
     data,
+    AllSegmentations,
   } = useSegmentationTableContext('SegmentationSegments');
 
-  // Try to get segmentation data from expanded context first, then fall back to table context
+  console.log('Segmentations in ALL VIEWPORTS: ', AllSegmentations);
+  console.log('Segmentations in ActiveViewport :', data);
+
+  AllSegmentations.forEach((segmentation, index) => {
+    console.log(`${segmentation.label}:`);
+    const segments = segmentation.segments;
+
+    Object.keys(segments).forEach(segmentKey => {
+      const segment = segments[segmentKey];
+      if (segment.cachedStats && segment.cachedStats.namedStats) {
+        console.log(`  Segment ${segmentKey} nameStats:`, segment.cachedStats.namedStats);
+      }
+    });
+  });
+
+  // data.map((entry, entryIndex) => {
+  //   console.log(`\nENTRY DATA ${entryIndex}:`);
+  //   for (const [key, segment] of Object.entries(entry.segmentation.segments)) {
+  //     const namedStats = segment?.cachedStats?.namedStats;
+  //     console.log(`  Segment ${key} namedStats:`, namedStats || 'No namedStats for this segment.');
+  //   }
+  // });
+
   let segmentation;
   let representation;
 
   try {
-    // Try to use the SegmentationExpanded context if available
     const segmentationInfo = useSegmentationExpanded('SegmentationSegments');
     segmentation = segmentationInfo.segmentation;
     representation = segmentationInfo.representation;
   } catch (e) {
-    // Not within SegmentationExpanded context, get from active segmentation
     const segmentationInfo = data.find(
       entry => entry.segmentation.segmentationId === activeSegmentationId
     );
@@ -38,6 +60,10 @@ export const SegmentationSegments = ({ children = null }: { children?: React.Rea
 
   const segments = Object.values(representation.segments);
   const isActiveSegmentation = segmentation.segmentationId === activeSegmentationId;
+  // console.log('segments: ', segments);
+
+  // const allSegs = SegmentationService?.getSegmentations();
+  // console.log('allSegs: ', allSegs);
 
   const { ref: scrollableContainerRef, maxHeight } = useDynamicMaxHeight(segments);
 
@@ -46,99 +72,102 @@ export const SegmentationSegments = ({ children = null }: { children?: React.Rea
   }
 
   return (
-    <ScrollArea
-      className={`bg-bkg-low space-y-px`}
-      showArrows={true}
-    >
-      <div
-        ref={scrollableContainerRef}
-        style={{ maxHeight: maxHeight }}
+    <div>
+      <ScrollArea
+        className={`bg-bkg-low space-y-px`}
+        showArrows={true}
       >
-        {segments.map(segment => {
-          if (!segment) {
-            return null;
-          }
-          const { segmentIndex, color, visible } = segment as {
-            segmentIndex: number;
-            color: number[];
-            visible: boolean;
-          };
-          const segmentFromSegmentation = segmentation.segments[segmentIndex];
+        <div
+          ref={scrollableContainerRef}
+          style={{ maxHeight: maxHeight }}
+        >
+          {segments.map(segment => {
+            if (!segment) {
+              return null;
+            }
+            const { segmentIndex, color, visible } = segment as {
+              segmentIndex: number;
+              color: number[];
+              visible: boolean;
+            };
+            const segmentFromSegmentation = segmentation.segments[segmentIndex];
 
-          if (!segmentFromSegmentation) {
-            return null;
-          }
+            if (!segmentFromSegmentation) {
+              return null;
+            }
 
-          const { locked, active, label, displayText } = segmentFromSegmentation;
-          const cssColor = `rgb(${color[0]},${color[1]},${color[2]})`;
+            const { locked, active, label, displayText } = segmentFromSegmentation;
+            const cssColor = `rgb(${color[0]},${color[1]},${color[2]})`;
 
-          const hasStats = segmentFromSegmentation.cachedStats?.namedStats;
-          const DataRowComponent = (
-            <DataRow
-              key={segmentIndex}
-              number={segmentIndex}
-              title={label}
-              // details={displayText}
-              description={displayText}
-              colorHex={cssColor}
-              isSelected={active}
-              isVisible={visible}
-              isLocked={locked}
-              disableEditing={disableEditing}
-              className={!isActiveSegmentation ? 'opacity-80' : ''}
-              onColor={() => onSegmentColorClick(segmentation.segmentationId, segmentIndex)}
-              onToggleVisibility={() =>
-                onToggleSegmentVisibility(
-                  segmentation.segmentationId,
-                  segmentIndex,
-                  representation.type
-                )
-              }
-              onToggleLocked={() => onToggleSegmentLock(segmentation.segmentationId, segmentIndex)}
-              onSelect={() => onSegmentClick(segmentation.segmentationId, segmentIndex)}
-              onRename={() => onSegmentEdit(segmentation.segmentationId, segmentIndex)}
-              onDelete={() => onSegmentDelete(segmentation.segmentationId, segmentIndex)}
-            />
-          );
-
-          return hasStats ? (
-            <HoverCard
-              key={`hover-${segmentIndex}`}
-              openDelay={300}
-            >
-              <HoverCardTrigger asChild>
-                <div>{DataRowComponent}</div>
-              </HoverCardTrigger>
-              <HoverCardContent
-                side="left"
-                align="start"
-                className="w-72 border"
-              >
-                <div className="mb-4 flex items-center space-x-2">
-                  <div
-                    className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
-                    style={{ backgroundColor: cssColor }}
-                  ></div>
-                  <h3 className="text-muted-foreground break-words font-semibold">{label}</h3>
-                </div>
-
-                <SegmentStatistics
-                  segment={{
-                    ...segmentFromSegmentation,
+            const hasStats = segmentFromSegmentation.cachedStats?.namedStats;
+            const DataRowComponent = (
+              <DataRow
+                key={segmentIndex}
+                number={segmentIndex}
+                title={label}
+                description={displayText}
+                colorHex={cssColor}
+                isSelected={active}
+                isVisible={visible}
+                isLocked={locked}
+                disableEditing={disableEditing}
+                className={!isActiveSegmentation ? 'opacity-80' : ''}
+                onColor={() => onSegmentColorClick(segmentation.segmentationId, segmentIndex)}
+                onToggleVisibility={() =>
+                  onToggleSegmentVisibility(
+                    segmentation.segmentationId,
                     segmentIndex,
-                  }}
-                  segmentationId={segmentation.segmentationId}
+                    representation.type
+                  )
+                }
+                onToggleLocked={() =>
+                  onToggleSegmentLock(segmentation.segmentationId, segmentIndex)
+                }
+                onSelect={() => onSegmentClick(segmentation.segmentationId, segmentIndex)}
+                onRename={() => onSegmentEdit(segmentation.segmentationId, segmentIndex)}
+                onDelete={() => onSegmentDelete(segmentation.segmentationId, segmentIndex)}
+              />
+            );
+
+            return hasStats ? (
+              <PopupCard
+                key={`hover-${segmentIndex}`}
+                modal={false}
+              >
+                <PopupCardTrigger asChild>
+                  <div>{DataRowComponent}</div>
+                </PopupCardTrigger>
+                <PopupCardContent
+                  side="left"
+                  align="start"
+                  className="w-72 border"
                 >
-                  {children}
-                </SegmentStatistics>
-              </HoverCardContent>
-            </HoverCard>
-          ) : (
-            DataRowComponent
-          );
-        })}
-      </div>
-    </ScrollArea>
+                  <div className="mb-4 flex items-center space-x-2">
+                    <div
+                      className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
+                      style={{ backgroundColor: cssColor }}
+                    ></div>
+                    <h3 className="text-muted-foreground break-words font-semibold">{label}</h3>
+                  </div>
+                  <SegmentStatistics
+                    segment={{
+                      ...segmentFromSegmentation,
+                      segmentIndex,
+                    }}
+                    segmentationId={segmentation.segmentationId}
+                  >
+                    {children}
+                  </SegmentStatistics>
+                </PopupCardContent>
+              </PopupCard>
+            ) : (
+              DataRowComponent
+            );
+          })}
+        </div>
+      </ScrollArea>
+      <CompareSegs AllSegmentations={AllSegmentations} />
+    </div>
   );
 };
 
