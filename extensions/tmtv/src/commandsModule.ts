@@ -269,7 +269,7 @@ const commandsModule = ({ servicesManager, commandsManager, extensionManager }: 
         // Fetch segmentation data from backend
         const fetchSegmentationData = async studyuid => {
           try {
-            const response = await fetch('http://localhost:3001/api/get-segmentation/', {
+            const response = await fetch('http://localhost:3001/api/get-prostate-segmentation/', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -283,12 +283,12 @@ const commandsModule = ({ servicesManager, commandsManager, extensionManager }: 
 
             const arrayBuffer = await response.arrayBuffer();
             if (arrayBuffer.byteLength === 0) {
-              throw new Error('Received empty segmentation data');
+              throw new Error('Received empty Prostate segmentation data');
             }
 
             return new Uint8Array(arrayBuffer);
           } catch (error) {
-            console.error('Error fetching segmentation data:', error);
+            console.error('Error fetching Prostate segmentation data:', error);
             throw error; // Re-throw to be handled by outer try-catch
           }
         };
@@ -297,7 +297,7 @@ const commandsModule = ({ servicesManager, commandsManager, extensionManager }: 
         const studyInstanceUID = displaySet.StudyInstanceUID;
 
         // Show loading message
-        console.log('Loading segmentation data from backend...');
+        console.log('Loading Prostate segmentation data from backend...');
 
         // Fetch segmentation data from backend first
         const segmentationData = await fetchSegmentationData(studyInstanceUID);
@@ -324,7 +324,7 @@ const commandsModule = ({ servicesManager, commandsManager, extensionManager }: 
 
         if (!volume) {
           throw new Error(
-            'Volume not found after waiting. Segmentation may not be properly initialized.'
+            'Volume not found after waiting. Prostate Segmentation may not be properly initialized.'
           );
         }
 
@@ -336,7 +336,7 @@ const commandsModule = ({ servicesManager, commandsManager, extensionManager }: 
         // Use VoxelManager to set the complete scalar data array
         if (segmentationData.length !== totalVoxels) {
           console.warn(
-            `Segmentation data size mismatch. Expected: ${totalVoxels}, Got: ${segmentationData.length}`
+            `Prostate Segmentation data size mismatch. Expected: ${totalVoxels}, Got: ${segmentationData.length}`
           );
 
           // Handle size mismatch
@@ -364,7 +364,166 @@ const commandsModule = ({ servicesManager, commandsManager, extensionManager }: 
           segmentationId,
         };
       } catch (error) {
-        console.error('Error updating segmentation data:', error);
+        console.error('Error updating Prostate segmentation data:', error);
+        return {
+          success: false,
+          error: error.message,
+        };
+      }
+    },
+    segmentLesions: async ({ label }) => {
+      try {
+        // Create a segmentation of the same resolution as the source data
+        const { viewportMatchDetails } = hangingProtocolService.getMatchDetails();
+
+        const ctDisplaySet = actions.getMatchingCTDisplaySet({
+          viewportMatchDetails,
+        });
+
+        if (!ctDisplaySet) {
+          console.error('No matching CT display set found');
+          return { success: false, error: 'No matching CT display set found' };
+        }
+
+        let ctViewportId = null;
+        if (ctDisplaySet) {
+          for (const [viewportId, { displaySetsInfo }] of viewportMatchDetails.entries()) {
+            const isCT = displaySetsInfo.some(
+              ({ displaySetInstanceUID }) =>
+                displaySetInstanceUID === ctDisplaySet.displaySetInstanceUID
+            );
+
+            if (isCT) {
+              ctViewportId = viewportId;
+              break;
+            }
+          }
+        }
+
+        if (!ctViewportId) {
+          console.error('CT viewport not found');
+          return { success: false, error: 'CT viewport not found' };
+        }
+
+        const currentSegmentations =
+          segmentationService.getSegmentationRepresentations(ctViewportId);
+        const segmentedProstate = currentSegmentations.filter(seg => seg.id === 'lesions');
+
+        if (segmentedProstate.length > 0) {
+          console.log('Lesions segmentation already exists');
+          return { success: true, message: 'ProsLesionsate segmentation already exists' };
+        }
+
+        const displaySet = displaySetService.getDisplaySetByUID(ctDisplaySet.displaySetInstanceUID);
+        const segmentationId = await segmentationService.createLabelmapForDisplaySet(displaySet, {
+          label: label || `Automated Lesions Segmentation`,
+          segments: { 1: { label: `Lesions`, active: true } },
+          segmentationId: 'lesions',
+        });
+
+        await segmentationService.addSegmentationRepresentation(ctViewportId, {
+          segmentationId,
+        });
+
+        // Fetch segmentation data from backend
+        const fetchSegmentationData = async studyuid => {
+          try {
+            const response = await fetch('http://localhost:3001/api/get-lesions-segmentation/', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ studyuid }),
+            });
+
+            if (!response.ok) {
+              throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const arrayBuffer = await response.arrayBuffer();
+            if (arrayBuffer.byteLength === 0) {
+              throw new Error('Received empty Lesions segmentation data');
+            }
+
+            return new Uint8Array(arrayBuffer);
+          } catch (error) {
+            console.error('Error fetching Lesions segmentation data:', error);
+            throw error; // Re-throw to be handled by outer try-catch
+          }
+        };
+
+        // Get study UID from the display set
+        const studyInstanceUID = displaySet.StudyInstanceUID;
+
+        // Show loading message
+        console.log('Loading Lesions segmentation data from backend...');
+
+        // Fetch segmentation data from backend first
+        const segmentationData = await fetchSegmentationData(studyInstanceUID);
+
+        // Wait for segmentation to be fully initialized and get volume using the proper method
+        let volume = null;
+        let attempts = 0;
+        const maxAttempts = 10;
+
+        while (!volume && attempts < maxAttempts) {
+          await new Promise(resolve => setTimeout(resolve, 200));
+
+          // Use the proper segmentationService method to get the labelmap volume
+          volume = segmentationService.getLabelmapVolume(segmentationId);
+
+          if (volume) {
+            console.log('Successfully found volume using getLabelmapVolume:', volume);
+            break;
+          }
+
+          attempts++;
+          console.log(`Attempt ${attempts}/${maxAttempts} - Waiting for volume to be ready...`);
+        }
+
+        if (!volume) {
+          throw new Error(
+            'Volume not found after waiting. Lesions Segmentation may not be properly initialized.'
+          );
+        }
+
+        // Get volume dimensions
+        const { dimensions, voxelManager } = volume;
+        const [width, height, depth] = dimensions;
+        const totalVoxels = width * height * depth;
+
+        // Use VoxelManager to set the complete scalar data array
+        if (segmentationData.length !== totalVoxels) {
+          console.warn(
+            `Lesions Segmentation data size mismatch. Expected: ${totalVoxels}, Got: ${segmentationData.length}`
+          );
+
+          // Handle size mismatch
+          let processedData;
+          if (segmentationData.length < totalVoxels) {
+            // Pad with zeros if data is smaller than expected
+            processedData = new Uint8Array(totalVoxels);
+            processedData.set(segmentationData);
+          } else {
+            // Truncate if data is larger than expected
+            processedData = segmentationData.subarray(0, totalVoxels);
+          }
+
+          // Set the processed data using VoxelManager
+          voxelManager.setCompleteScalarDataArray(processedData);
+        } else {
+          // Direct assignment when sizes match perfectly
+          voxelManager.setCompleteScalarDataArray(segmentationData);
+        }
+
+        // Trigger volume modified event to update the rendering
+        volume.modified();
+
+        return {
+          segmentationId,
+        };
+      } catch (error) {
+        console.error('Error updating Lesions segmentation data:', error);
         return {
           success: false,
           error: error.message,

@@ -5,6 +5,7 @@ import { useSegmentationTableContext, useSegmentationExpanded } from './contexts
 import { SegmentStatistics } from './SegmentStatistics';
 import { useDynamicMaxHeight } from '../../hooks/useDynamicMaxHeight';
 import CompareSegs from './CompareSegs';
+import FindingsReportModal from './FindingsReportModal';
 
 export const SegmentationSegments = ({ children = null }: { children?: React.ReactNode }) => {
   const {
@@ -18,10 +19,15 @@ export const SegmentationSegments = ({ children = null }: { children?: React.Rea
     onSegmentDelete,
     data,
     AllSegmentations,
+    studyMetadata,
+    patientMetaData,
   } = useSegmentationTableContext('SegmentationSegments');
 
+  console.log('IN FORMMMMM');
   console.log('Segmentations in ALL VIEWPORTS: ', AllSegmentations);
   console.log('Segmentations in ActiveViewport :', data);
+  console.log('studyMetadata: ', studyMetadata);
+  console.log('patientMetaData: ', patientMetaData);
 
   AllSegmentations.forEach((segmentation, index) => {
     console.log(`${segmentation.label}:`);
@@ -60,6 +66,7 @@ export const SegmentationSegments = ({ children = null }: { children?: React.Rea
 
   const segments = Object.values(representation.segments);
   const isActiveSegmentation = segmentation.segmentationId === activeSegmentationId;
+
   // console.log('segments: ', segments);
 
   // const allSegs = SegmentationService?.getSegmentations();
@@ -167,6 +174,11 @@ export const SegmentationSegments = ({ children = null }: { children?: React.Rea
         </div>
       </ScrollArea>
       <CompareSegs AllSegmentations={AllSegmentations} />
+      <FindingsReportModal
+        studyMetadata={studyMetadata}
+        AllSegmentations={AllSegmentations}
+        patientMetaData={patientMetaData}
+      />
     </div>
   );
 };

@@ -8,15 +8,18 @@ interface LabelProps {
 }
 
 const labelStyles: Record<LabelType, string> = {
-  healthy: 'bg-[#2a3110] text-[#008A2E] border-[#2a3110]',
-  suspicious: 'bg-orange-900 text-orange-300 border-orange-900',
-  error: 'bg-red-900 text-red-300 border-red-300',
+  healthy:
+    'bg-green-950 text-green-300 border-green-600 hover:bg-green-900 hover:border-green-500 bg-green-800/50',
+  suspicious:
+    'bg-orange-950 text-orange-200 border-orange-600 hover:bg-orange-900 hover:border-orange-500 bg-orange-800/50',
+  error:
+    'bg-red-950 text-red-200 border-red-600 hover:bg-red-900 hover:border-red-500 bg-red-800/50',
 };
 
 export function Label({ type, children }: LabelProps) {
   return (
     <span
-      className={`red ml-5 inline-block rounded-full border-2 px-3 py-1 text-xs font-medium ${labelStyles[type]}`}
+      className={`inline-flex items-center rounded-full border-2 px-3 py-1 text-sm font-semibold transition-colors duration-200 ${labelStyles[type]}`}
     >
       {children}
     </span>

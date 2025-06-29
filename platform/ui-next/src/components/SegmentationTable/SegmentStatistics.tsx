@@ -31,24 +31,35 @@ const DefaultStatsList = () => {
       return orderA - orderB;
     });
 
+  // Define keys that should use "HU" unit
+  const huUnitKeys = ['min', 'max', 'mean'];
+
   return (
     <div className="space-y-1">
-      {sortedStats.map(([key, stat]) => {
-        const { label, value, unit } = stat;
+      {sortedStats
+        .filter(([key, stat]) => key !== 'bidirectional')
+        .map(([key, stat]) => {
+          const { label, value } = stat;
+          // Force unit to "HU" for specified keys, otherwise use original unit or empty string
+          const displayUnit = huUnitKeys.includes(key)
+            ? 'HU'
+            : stat.unit && stat.unit !== 'none'
+              ? stat.unit
+              : '';
 
-        return (
-          <div
-            key={key}
-            className="flex justify-between"
-          >
-            <div>{label}</div>
-            <div>
-              <span className="text-white">{handleNumber(value)}</span>{' '}
-              <span className="">{unit && unit !== 'none' ? unit : ''}</span>
+          return (
+            <div
+              key={key}
+              className="flex justify-between"
+            >
+              <div>{label}</div>
+              <div>
+                <span className="text-white">{handleNumber(value)}</span>{' '}
+                <span className="">{displayUnit}</span>
+              </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
     </div>
   );
 };

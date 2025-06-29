@@ -68,24 +68,24 @@ export const SignupPage = () => {
           <div className="mx-auto flex max-w-7xl items-center justify-between">
             <h1 className="text-2xl font-bold">TherAInostics</h1>
             <nav className="space-x-4">
-              <Link
+              {/* <Link
                 to="/home"
                 className="text-blue-400 hover:text-blue-300"
               >
                 Home
-              </Link>
-              <Link
+              </Link> */}
+              {/* <Link
                 to="/login"
                 className="text-blue-400 hover:text-blue-300"
               >
                 Login
-              </Link>
-              <Link
+              </Link> */}
+              {/* <Link
                 to="/study-list"
                 className="text-blue-400 hover:text-blue-300"
               >
                 Study List
-              </Link>
+              </Link> */}
             </nav>
           </div>
         </header>

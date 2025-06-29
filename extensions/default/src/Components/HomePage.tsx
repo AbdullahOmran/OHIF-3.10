@@ -11,7 +11,6 @@ export const HomePage = () => {
 
   const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement contact form submission (e.g., send to API or email service)
     console.log('Contact form submitted:', { firstName, lastName, email, organization, message });
     setFirstName('');
     setLastName('');
@@ -19,17 +18,16 @@ export const HomePage = () => {
     setOrganization('');
     setMessage('');
     setIsSubmitted(true);
-    setTimeout(() => setIsSubmitted(false), 3000); // Reset after 3 seconds
+    setTimeout(() => setIsSubmitted(false), 3000);
   };
 
-  // Scroll handler for in-page navigation
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
     <div className="flex min-h-screen flex-col bg-black text-gray-200">
-      {/* Navigation */}
+      {/* Navigation (unchanged) */}
       <header className="border-b border-gray-800">
         <div className="container mx-auto flex items-center justify-between py-4 px-4 md:px-6">
           <Link
@@ -91,7 +89,7 @@ export const HomePage = () => {
       </header>
 
       <main className="flex-1">
-        {/* Hero Section */}
+        {/* Hero Section (unchanged) */}
         <section className="bg-gradient-to-b from-gray-900 to-black py-20">
           <div className="container mx-auto px-4 md:px-6">
             <div className="grid items-center gap-6 lg:grid-cols-2 lg:gap-12">
@@ -133,7 +131,7 @@ export const HomePage = () => {
           </div>
         </section>
 
-        {/* Features Section */}
+        {/* Updated Features Section */}
         <section
           id="features"
           className="bg-black py-20"
@@ -145,11 +143,12 @@ export const HomePage = () => {
                   Features
                 </div>
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-                  Advanced AI for Personalized Cancer Care
+                  Advanced AI for Precision Oncology
                 </h2>
                 <p className="md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed max-w-[900px] text-gray-400">
-                  Our platform combines cutting-edge AI with medical expertise to deliver precise
-                  treatment assessment and prediction.
+                  TherAInostics leverages state-of-the-art AI to deliver precise assessment and
+                  prediction of Lutetium-PSMA therapy outcomes, empowering clinicians with
+                  actionable insights.
                 </p>
               </div>
             </div>
@@ -171,9 +170,10 @@ export const HomePage = () => {
                     />
                   </svg>
                 </div>
-                <h3 className="text-xl font-bold">Treatment Assessment</h3>
+                <h3 className="text-xl font-bold">Automated PET/CT Analysis</h3>
                 <p className="text-center text-gray-400">
-                  Evaluate Lutetium treatment efficacy through advanced PET/CT image analysis.
+                  AI-driven segmentation and quantification of PET/CT images for accurate assessment
+                  of Lutetium-PSMA uptake.
                 </p>
               </div>
               <div className="flex flex-col items-center space-y-2 rounded-lg border border-gray-800 bg-gray-900 p-6 shadow-sm transition-shadow hover:shadow-md">
@@ -189,13 +189,14 @@ export const HomePage = () => {
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      d="M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 0 1 4.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0 1 12 15a9.065 9.065 0 0 0-6.23-.693L5 14.5m14.8.8 1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0 1 12 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5"
+                      d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z"
                     />
                   </svg>
                 </div>
-                <h3 className="text-xl font-bold">Predictive Analytics</h3>
+                <h3 className="text-xl font-bold">Predictive Outcome Modeling</h3>
                 <p className="text-center text-gray-400">
-                  Forecast treatment effectiveness based on imaging features and clinical data.
+                  Machine learning models predict treatment response based on imaging biomarkers and
+                  patient data.
                 </p>
               </div>
               <div className="flex flex-col items-center space-y-2 rounded-lg border border-gray-800 bg-gray-900 p-6 shadow-sm transition-shadow hover:shadow-md">
@@ -211,13 +212,14 @@ export const HomePage = () => {
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"
+                      d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"
                     />
                   </svg>
                 </div>
-                <h3 className="text-xl font-bold">Personalized Medicine</h3>
+                <h3 className="text-xl font-bold">Personalized Treatment Plans</h3>
                 <p className="text-center text-gray-400">
-                  Tailor treatment plans based on individual patient data and AI insights.
+                  Tailored therapy recommendations based on AI-driven insights and clinical
+                  guidelines.
                 </p>
               </div>
               <div className="flex flex-col items-center space-y-2 rounded-lg border border-gray-800 bg-gray-900 p-6 shadow-sm transition-shadow hover:shadow-md">
@@ -233,13 +235,14 @@ export const HomePage = () => {
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z"
+                      d="M3.75 3v11.25c0 .621.504 1.125 1.125 1.125h2.25c.621 0 1.125-.504 1.125-1.125V3H3.75ZM12 3v11.25c0 .621.504 1.125 1.125 1.125h2.25c.621 0 1.125-.504 1.125-1.125V3H12ZM20.25 3v11.25c0 .621.504 1.125 1.125 1.125h2.25c.621 0 1.125-.504 1.125-1.125V3h-4.5Z"
                     />
                   </svg>
                 </div>
-                <h3 className="text-xl font-bold">Real-time Monitoring</h3>
+                <h3 className="text-xl font-bold">Real-Time Progress Tracking</h3>
                 <p className="text-center text-gray-400">
-                  Track treatment progress with continuous assessment and feedback.
+                  Monitor treatment efficacy with longitudinal analysis of PET/CT scans and clinical
+                  metrics.
                 </p>
               </div>
               <div className="flex flex-col items-center space-y-2 rounded-lg border border-gray-800 bg-gray-900 p-6 shadow-sm transition-shadow hover:shadow-md">
@@ -255,14 +258,14 @@ export const HomePage = () => {
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      d="M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 0 1 4.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0 1 12 15a9.065 9.065 0 0 0-6.23-.693L5 14.5m14.8.8 1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0 1 12 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5"
+                      d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6M19.5 14.25v-3.375M4.5 14.25v-3.375"
                     />
                   </svg>
                 </div>
-                <h3 className="text-xl font-bold">Research Integration</h3>
+                <h3 className="text-xl font-bold">Seamless EHR Integration</h3>
                 <p className="text-center text-gray-400">
-                  Incorporate the latest research findings into our AI models for continuous
-                  improvement.
+                  Integrate with electronic health records (EHR) systems for streamlined workflows
+                  and data access.
                 </p>
               </div>
               <div className="flex flex-col items-center space-y-2 rounded-lg border border-gray-800 bg-gray-900 p-6 shadow-sm transition-shadow hover:shadow-md">
@@ -282,16 +285,17 @@ export const HomePage = () => {
                     />
                   </svg>
                 </div>
-                <h3 className="text-xl font-bold">Secure Data Handling</h3>
+                <h3 className="text-xl font-bold">HIPAA-Compliant Security</h3>
                 <p className="text-center text-gray-400">
-                  HIPAA-compliant platform with advanced encryption for patient data protection.
+                  End-to-end encryption and compliance with HIPAA regulations to protect patient
+                  data.
                 </p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Subscription Packages Section */}
+        {/* Updated Pricing Section */}
         <section
           id="pricing"
           className="bg-gray-800 py-20"
@@ -306,7 +310,8 @@ export const HomePage = () => {
                   Subscription Packages
                 </h2>
                 <p className="md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed max-w-[900px] text-gray-400">
-                  Choose the plan that best fits your clinical needs and budget.
+                  Flexible plans designed to meet the needs of clinics, hospitals, and research
+                  institutions.
                 </p>
               </div>
             </div>
@@ -319,6 +324,9 @@ export const HomePage = () => {
                     <span className="text-4xl font-bold">$499</span>
                     <span className="text-sm text-gray-400">/month</span>
                   </div>
+                  <p className="mt-2 text-sm text-gray-400">
+                    Ideal for small clinics and individual practitioners.
+                  </p>
                   <ul className="mt-6 space-y-3">
                     <li className="flex items-center">
                       <svg
@@ -335,7 +343,7 @@ export const HomePage = () => {
                       >
                         <polyline points="20 6 9 17 4 12"></polyline>
                       </svg>
-                      <span>feature</span>
+                      <span>Automated PET/CT Analysis (up to 50 scans/month)</span>
                     </li>
                     <li className="flex items-center">
                       <svg
@@ -352,7 +360,7 @@ export const HomePage = () => {
                       >
                         <polyline points="20 6 9 17 4 12"></polyline>
                       </svg>
-                      <span>feature</span>
+                      <span>Predictive Outcome Modeling</span>
                     </li>
                     <li className="flex items-center">
                       <svg
@@ -369,7 +377,24 @@ export const HomePage = () => {
                       >
                         <polyline points="20 6 9 17 4 12"></polyline>
                       </svg>
-                      <span>feature</span>
+                      <span>HIPAA-Compliant Data Storage</span>
+                    </li>
+                    <li className="flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="mr-2 h-5 w-5 text-blue-600"
+                      >
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                      <span>Email Support (Business Hours)</span>
                     </li>
                   </ul>
                   <div className="mt-6">
@@ -393,6 +418,9 @@ export const HomePage = () => {
                     <span className="text-4xl font-bold">$999</span>
                     <span className="text-sm text-gray-400">/month</span>
                   </div>
+                  <p className="mt-2 text-sm text-gray-400">
+                    Perfect for mid-sized hospitals and oncology practices.
+                  </p>
                   <ul className="mt-6 space-y-3">
                     <li className="flex items-center">
                       <svg
@@ -409,7 +437,7 @@ export const HomePage = () => {
                       >
                         <polyline points="20 6 9 17 4 12"></polyline>
                       </svg>
-                      <span>feature</span>
+                      <span>Automated PET/CT Analysis (up to 200 scans/month)</span>
                     </li>
                     <li className="flex items-center">
                       <svg
@@ -426,7 +454,7 @@ export const HomePage = () => {
                       >
                         <polyline points="20 6 9 17 4 12"></polyline>
                       </svg>
-                      <span>feature</span>
+                      <span>Predictive Outcome Modeling</span>
                     </li>
                     <li className="flex items-center">
                       <svg
@@ -443,7 +471,7 @@ export const HomePage = () => {
                       >
                         <polyline points="20 6 9 17 4 12"></polyline>
                       </svg>
-                      <span>feature</span>
+                      <span>Real-Time Progress Tracking</span>
                     </li>
                     <li className="flex items-center">
                       <svg
@@ -460,7 +488,24 @@ export const HomePage = () => {
                       >
                         <polyline points="20 6 9 17 4 12"></polyline>
                       </svg>
-                      <span>feature</span>
+                      <span>EHR Integration</span>
+                    </li>
+                    <li className="flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="mr-2 h-5 w-5 text-blue-600"
+                      >
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                      <span>Priority Email & Phone Support (24/7)</span>
                     </li>
                   </ul>
                   <div className="mt-6">
@@ -476,10 +521,13 @@ export const HomePage = () => {
               {/* Enterprise Plan */}
               <div className="flex flex-col rounded-lg border border-gray-700 bg-gray-900 shadow-sm">
                 <div className="p-6">
-                  <h3 className="text-2xl font-bold">Enterprise</h3>
+                  <h3 className="text-2xl font-bold">Enterprise (On-Premises)</h3>
                   <div className="mt-4 text-center">
-                    <span className="text-4xl font-bold">On Premises</span>
+                    <span className="text-4xl font-bold">Custom</span>
                   </div>
+                  <p className="mt-2 text-sm text-gray-400">
+                    Tailored for large hospitals and research institutions.
+                  </p>
                   <ul className="mt-6 space-y-3">
                     <li className="flex items-center">
                       <svg
@@ -496,7 +544,7 @@ export const HomePage = () => {
                       >
                         <polyline points="20 6 9 17 4 12"></polyline>
                       </svg>
-                      <span>feature</span>
+                      <span>Unlimited PET/CT Analysis</span>
                     </li>
                     <li className="flex items-center">
                       <svg
@@ -513,7 +561,7 @@ export const HomePage = () => {
                       >
                         <polyline points="20 6 9 17 4 12"></polyline>
                       </svg>
-                      <span>feature</span>
+                      <span>All Features (Analysis, Prediction, Tracking, EHR)</span>
                     </li>
                     <li className="flex items-center">
                       <svg
@@ -530,7 +578,7 @@ export const HomePage = () => {
                       >
                         <polyline points="20 6 9 17 4 12"></polyline>
                       </svg>
-                      <span>feature</span>
+                      <span>On-Premises Deployment</span>
                     </li>
                     <li className="flex items-center">
                       <svg
@@ -547,7 +595,24 @@ export const HomePage = () => {
                       >
                         <polyline points="20 6 9 17 4 12"></polyline>
                       </svg>
-                      <span>feature</span>
+                      <span>Dedicated Account Manager</span>
+                    </li>
+                    <li className="flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="mr-2 h-5 w-5 text-blue-600"
+                      >
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                      <span>Custom Training & Onboarding</span>
                     </li>
                   </ul>
                   <div className="mt-6">
@@ -563,7 +628,7 @@ export const HomePage = () => {
           </div>
         </section>
 
-        {/* Contact Us Section */}
+        {/* Contact Us Section (unchanged) */}
         <section
           id="contact"
           className="bg-black py-20"
@@ -756,7 +821,7 @@ export const HomePage = () => {
         </section>
       </main>
 
-      {/* Footer */}
+      {/* Footer (unchanged) */}
       <footer className="border-t bg-gray-800">
         <div className="container mx-auto flex flex-col gap-4 py-10 px-4 md:flex-row md:gap-8 md:px-6">
           <div className="flex-1 space-y-4">
@@ -874,7 +939,6 @@ export const HomePage = () => {
                   className="h-5 w-5"
                 >
                   <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-                  {/* Replace with your custom Facebook SVG path if needed */}
                 </svg>
               </a>
               <a
@@ -894,7 +958,6 @@ export const HomePage = () => {
                   className="h-5 w-5"
                 >
                   <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path>
-                  {/* Replace with your custom Twitter/X SVG path if needed */}
                 </svg>
               </a>
               <a
@@ -928,7 +991,6 @@ export const HomePage = () => {
                     y1="6.5"
                     y2="6.5"
                   ></line>
-                  {/* Replace with your custom Instagram SVG path if needed */}
                 </svg>
               </a>
               <a
@@ -959,7 +1021,6 @@ export const HomePage = () => {
                     cy="4"
                     r="2"
                   ></circle>
-                  {/* Replace with your custom LinkedIn SVG path if needed */}
                 </svg>
               </a>
             </div>
@@ -967,7 +1028,6 @@ export const HomePage = () => {
         </div>
       </footer>
 
-      {/* Tailwind Animation Keyframes */}
       <style>
         {`
           @keyframes fade-in {
