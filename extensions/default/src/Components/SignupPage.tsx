@@ -74,12 +74,12 @@ export const SignupPage = () => {
               >
                 Home
               </Link> */}
-              <Link
+              {/* <Link
                 to="/login"
                 className="text-blue-400 hover:text-blue-300"
               >
                 Login
-              </Link>
+              </Link> */}
               {/* <Link
                 to="/study-list"
                 className="text-blue-400 hover:text-blue-300"
