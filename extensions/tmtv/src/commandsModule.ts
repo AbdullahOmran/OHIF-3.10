@@ -5,12 +5,13 @@ import { classes } from '@ohif/core';
 import i18n from '@ohif/i18n';
 import getThresholdValues from './utils/getThresholdValue';
 import createAndDownloadTMTVReport from './utils/createAndDownloadTMTVReport';
-
 import dicomRTAnnotationExport from './utils/dicomRTAnnotationExport/RTStructureSet';
-
+import { utilities as csUtils, Types as CoreTypes } from '@cornerstonejs/core';
+import { utilities as cstUtils } from '@cornerstonejs/tools';
+import * as cornerstoneTools from '@cornerstonejs/tools';
 import { Enums } from '@cornerstonejs/tools';
 import { utils } from '@ohif/core';
-
+import { updateSegmentBidirectionalStats } from './utils/updateSegmentationStats';
 const { SegmentationRepresentations } = Enums;
 const { formatPN } = utils;
 
@@ -196,7 +197,9 @@ const commandsModule = ({ servicesManager, commandsManager, extensionManager }: 
 
       const segmentationId = await segmentationService.createLabelmapForDisplaySet(displaySet, {
         label: `Segmentation ${currentSegmentations.length + 1}`,
-        segments: { 1: { label: `${i18n.t('Segment')} 1`, active: true } },
+        segments: {
+          1: { label: `${i18n.t('Segment')} 1`, active: true },
+        },
       });
 
       segmentationService.addSegmentationRepresentation(withViewportId, {
@@ -239,9 +242,10 @@ const commandsModule = ({ servicesManager, commandsManager, extensionManager }: 
           return { success: false, error: 'CT viewport not found' };
         }
 
-        const currentSegmentations =
-          segmentationService.getSegmentationRepresentations(ctViewportId);
-        const segmentedProstate = currentSegmentations.filter(seg => seg.id === 'prostate');
+        const currentSegmentations = segmentationService.getSegmentations();
+        const segmentedProstate = currentSegmentations.filter(
+          seg => seg.segmentationId === 'prostate'
+        );
 
         if (segmentedProstate.length > 0) {
           console.log('Prostate segmentation already exists');
@@ -250,8 +254,11 @@ const commandsModule = ({ servicesManager, commandsManager, extensionManager }: 
 
         const displaySet = displaySetService.getDisplaySetByUID(ctDisplaySet.displaySetInstanceUID);
         const segmentationId = await segmentationService.createLabelmapForDisplaySet(displaySet, {
-          label: label || `Automated Prostate Segmentation`,
-          segments: { 1: { label: `Prostate`, active: true } },
+          label: label || `Automated Segmentation`,
+          segments: {
+            1: { label: `Prostate`, active: true },
+            2: { label: `Lesions`, active: false },
+          },
           segmentationId: 'prostate',
         });
 
@@ -523,7 +530,64 @@ const commandsModule = ({ servicesManager, commandsManager, extensionManager }: 
         };
       }
     },
-    // Add this debugging function to check if segmentation data is actually there
+
+    // // Add this debugging function to check if segmentation data is actually there
+    runSegmentBidirectional: async ({ segmentationId, segmentIndex } = {}) => {
+      // Get active segmentation if not specified
+      const targetSegmentation = { segmentationId, segmentIndex };
+
+      const { segmentationId: targetId, segmentIndex: targetIndex } = targetSegmentation;
+
+      // Get bidirectional measurement data
+      const bidirectionalData = await cstUtils.segmentation.getSegmentLargestBidirectional({
+        segmentationId: targetId,
+        segmentIndices: [targetIndex],
+      });
+
+      const activeViewportId = viewportGridService.getActiveViewportId();
+
+      // Process each bidirectional measurement
+      bidirectionalData.forEach(measurement => {
+        const { segmentIndex, majorAxis, minorAxis } = measurement;
+
+        // Create annotation
+        const annotation = cornerstoneTools.SegmentBidirectionalTool.hydrate(
+          activeViewportId,
+          [majorAxis, minorAxis],
+          {
+            segmentIndex,
+            segmentationId: targetId,
+          }
+        );
+
+        measurement.annotationUID = annotation.annotationUID;
+
+        // Update segmentation stats
+        const updatedSegmentation = updateSegmentBidirectionalStats({
+          segmentationId: targetId,
+          segmentIndex: targetIndex,
+          bidirectionalData: measurement,
+          segmentationService,
+          annotation,
+        });
+
+        // Save changes if needed
+        if (updatedSegmentation) {
+          segmentationService.addOrUpdateSegmentation({
+            segmentationId: targetId,
+            segments: updatedSegmentation.segments,
+          });
+        }
+      });
+
+      // get the active segmentIndex bidirectional annotation and jump to it
+      const activeBidirectional = bidirectionalData.find(
+        measurement => measurement.segmentIndex === targetIndex
+      );
+      // commandsManager.run('jumpToMeasurement', {
+      //   uid: activeBidirectional.annotationUID,
+      // });
+    },
 
     // Updated segmentation function with proper visibility handling
 
@@ -850,6 +914,9 @@ const commandsModule = ({ servicesManager, commandsManager, extensionManager }: 
     },
     setFusionPTColormap: {
       commandFn: actions.setFusionPTColormap,
+    },
+    runSegmentBidirectional: {
+      commandFn: actions.runSegmentBidirectional,
     },
   };
 

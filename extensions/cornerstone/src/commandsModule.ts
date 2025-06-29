@@ -265,12 +265,12 @@ function commandsModule({
       // Create presentation data with referencedImageId and options if provided
       const presentationData = referencedImageId
         ? {
-            ...presentations.positionPresentation,
-            viewReference: {
-              referencedImageId,
-              ...options,
-            },
-          }
+          ...presentations.positionPresentation,
+          viewReference: {
+            referencedImageId,
+            ...options,
+          },
+        }
         : presentations.positionPresentation;
 
       if (previousReferencedDisplaySetStoreKey) {
@@ -1217,11 +1217,11 @@ function commandsModule({
           segmentationId,
           segments: options.createInitialSegment
             ? {
-                1: {
-                  label: `${i18n.t('Segment')} 1`,
-                  active: true,
-                },
-              }
+              1: {
+                label: `${i18n.t('Segment')} 1`,
+                active: true,
+              },
+            }
             : {},
         }
       );
