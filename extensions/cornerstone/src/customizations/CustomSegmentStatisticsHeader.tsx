@@ -112,7 +112,7 @@ export const CustomSegmentStatisticsHeader = ({
             </TooltipTrigger>
             <TooltipContent side="bottom">{t('Toggle visibility')}</TooltipContent>
           </Tooltip>
-          <Tooltip>
+          {/* <Tooltip>
             <TooltipTrigger asChild>
               <Button
                 variant="ghost"
@@ -129,7 +129,7 @@ export const CustomSegmentStatisticsHeader = ({
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">{t('Jump to measurement')}</TooltipContent>
-          </Tooltip>
+          </Tooltip> */}
         </div>
       </div>
       <Separator className="bg-input" />

@@ -131,6 +131,7 @@ export default function PanelPetSUV({ servicesManager }: withAppTypes) {
           return;
         }
         const { ptDisplaySet, metadata } = displaySetInfo;
+        console.log('Metadata in panelSUV:', metadata);
         setPtDisplaySet(ptDisplaySet);
         setMetadata(metadata);
       }

@@ -8,10 +8,15 @@ export default function PanelSegmentation({ children }: withAppTypes) {
   const { commandsManager, servicesManager } = useSystem();
   const { customizationService, displaySetService } = servicesManager.services;
 
-  const { segmentationsWithRepresentations, AllSegmentations, disabled } =
-    useActiveViewportSegmentationRepresentations({
-      servicesManager,
-    });
+  const {
+    segmentationsWithRepresentations,
+    AllSegmentations,
+    patientMetaData,
+    studyMetadata,
+    disabled,
+  } = useActiveViewportSegmentationRepresentations({
+    servicesManager,
+  });
 
   // console.log('AllSegmentations', AllSegmentations);
   // Extract customization options
@@ -132,6 +137,8 @@ export default function PanelSegmentation({ children }: withAppTypes) {
   const tableProps = {
     disabled,
     AllSegmentations,
+    patientMetaData,
+    studyMetadata,
     data: segmentationsWithRepresentations,
     mode: segmentationTableMode,
     title: 'Segmentations',

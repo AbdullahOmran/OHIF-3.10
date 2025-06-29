@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import debounce from 'lodash.debounce';
+import { DicomMetadataStore } from '@ohif/core';
 import { roundNumber } from '@ohif/core/src/utils';
 import {
   SegmentationData,
@@ -89,6 +90,8 @@ type ViewportSegmentationRepresentation = {
     segmentation: SegmentationData;
   }[];
   AllSegmentations: SegmentationData[];
+  studyMetadata?: any;
+  patientMetaData?: any;
   disabled: boolean;
 };
 
@@ -112,6 +115,8 @@ export function useActiveViewportSegmentationRepresentations({
     useState<ViewportSegmentationRepresentation>({
       segmentationsWithRepresentations: [],
       AllSegmentations: [],
+      studyMetadata: null,
+      patientMetaData: null,
       disabled: false,
     });
 
@@ -126,6 +131,26 @@ export function useActiveViewportSegmentationRepresentations({
 
       const displaySet = displaySetService.getDisplaySetByUID(displaySetUIDs[0]);
 
+      const {
+        SeriesNumber,
+        SeriesInstanceUID,
+        StudyInstanceUID,
+        SeriesDate,
+        SeriesTime,
+        SeriesDescription,
+      } = displaySet;
+      console.log('displaySet', displaySet);
+
+      //usePatientInfo
+      const instance = displaySet?.instances?.[0] || displaySet?.instance;
+      const patientMetaData = {
+        PatientID: instance.PatientID || null,
+        PatientName: instance.PatientName || null,
+        PatientSex: instance.PatientSex || null,
+        PatientDOB: instance.PatientBirthDate || null,
+      };
+
+      console.log('patientMetaData', patientMetaData);
       if (!displaySet) {
         return;
       }
@@ -134,6 +159,8 @@ export function useActiveViewportSegmentationRepresentations({
         setSegmentationsWithRepresentations(prev => ({
           segmentationsWithRepresentations: [],
           AllSegmentations: [],
+          studyMetadata: null,
+          patientMetaData: null,
           disabled: true,
         }));
         return;
@@ -141,12 +168,17 @@ export function useActiveViewportSegmentationRepresentations({
 
       const segmentations = segmentationService.getSegmentations();
       const AllSegmentations = segmentationService.getSegmentations();
+
+      const studyMetadata = DicomMetadataStore.getStudy(StudyInstanceUID);
+      console.log('studyMetadata', studyMetadata);
       // console.log('1111segmentations', AllSegmentations);
 
       if (!segmentations?.length) {
         setSegmentationsWithRepresentations(prev => ({
           segmentationsWithRepresentations: [],
           AllSegmentations: [],
+          studyMetadata: null,
+          patientMetaData: null,
           disabled: false,
         }));
         return;
@@ -168,6 +200,8 @@ export function useActiveViewportSegmentationRepresentations({
       setSegmentationsWithRepresentations({
         segmentationsWithRepresentations: newSegmentationsWithRepresentations,
         AllSegmentations,
+        studyMetadata,
+        patientMetaData,
         disabled: false,
       });
     };

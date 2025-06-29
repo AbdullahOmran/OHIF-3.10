@@ -64,7 +64,7 @@ export const LoginPage = () => {
     <>
       <div className="flex min-h-screen flex-col bg-black text-white">
         {/* Header */}
-        <header className="bg-primary-dark w-full border-b border-gray-800 py-6 px-4 sm:px-6 lg:px-8">
+        <header className="w-full border-b border-gray-800 py-6 px-4 sm:px-6 lg:px-8">
           <div className="mx-auto flex max-w-7xl items-center justify-between">
             <h1 className="text-2xl font-bold">TherAInostics</h1>
             <nav className="space-x-4">
