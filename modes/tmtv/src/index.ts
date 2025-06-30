@@ -262,7 +262,7 @@ function modeFactory({ modeConfiguration }) {
                 console.error('Auto-segmentation failed:', error);
               }
             }
-          }, 15000);
+          }, 20000);
         }
       );
       unsubscriptions.push(unsubscribe2);
